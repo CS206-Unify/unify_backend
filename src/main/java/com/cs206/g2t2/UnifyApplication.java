@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Cs206G2T2Application {
+public class UnifyApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Cs206G2T2Application.class, args);
+		SpringApplication.run(UnifyApplication.class, args);
 	}
 
 }
