@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SuccessResponse implements Response {
-    protected String response;
+    //message stores the success message
+    protected String message;
 }
