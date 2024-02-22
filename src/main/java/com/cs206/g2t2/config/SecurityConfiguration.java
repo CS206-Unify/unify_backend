@@ -29,31 +29,11 @@ public class SecurityConfiguration {
         "/api/auth/register",
         "/api/auth/authenticate",
         "/api/auth/username/.*",
-        "/api/event-seating-details/.*",
 
         // admin user (additional features in the future)
-        "/api/fullEvent/.*",
-        "/api/exploreEvent",
-        "/api/detailsEvent/*",
-        "/api/order/.*",
-        "/api/orderPayment/.*",
-        "api/venue/.*",
 
         // others
-        "/api/spotify/get-user-code",
         "/error",
-
-        // swagger
-        "/v2/api-docs",
-        "/v3/api-docs",
-        "/v3/api-docs/.*",
-        "/swagger-resources/.*",
-        "swagger-resources/.*",
-        "/configuration/ui",
-        "/configuration/security",
-        "/swagger-ui/.*",
-        "webjars/.*",
-        "/swagger-ui.html"
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
