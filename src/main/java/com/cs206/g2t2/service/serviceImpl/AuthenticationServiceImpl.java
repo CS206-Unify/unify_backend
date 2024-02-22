@@ -34,7 +34,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final CommonService commonService;
 
     /**
-     * Searches for users in the repository which has the same username.
+     * Private helper: Searches for users in the repository which has the same username.
      * If user with username can be found in the repository, throw a DuplicatedUsernameException.
      *
      * @param username String object containing the username
