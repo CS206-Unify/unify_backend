@@ -20,18 +20,12 @@ import java.util.List;
 @Builder
 public class User implements UserDetails { // Implements UserDetails so that the security.core library can be used
 
-    // GETTER and SETTER removed as they are provided for by the Data annotation
-    @Id
-    private String id;
+    private String _id;
 
-    @NotBlank(message = "First name is required")
-    private String firstName;
-
-    @NotBlank(message = "Last name is required")
-    private String lastName;
+    private LocalDateTime userCreationDate;
 
     @NotBlank(message = "Username is required")
-    @Size(min = 6,
+    @Size(min = 8,
           max = 30,
           message = "Username must be between {min} and {max} characters long")
     private String username;
@@ -47,30 +41,13 @@ public class User implements UserDetails { // Implements UserDetails so that the
           message = "Password must be between {min} and {max} characters long")
     private String password;
 
-    @NotBlank(message = "Phone number is required")
-    @Pattern(regexp = "(6|8|9)\\d{7}", message = "Phone number must be valid")
-    private String phoneNo;
+    private String imageString;
 
-    private LocalDateTime userCreationDate;
+    private List<String> languages;
 
-    private String countryOfResidence;
+    private BSProfile bsProfile;
 
-    private String address;
-
-    private String postalCode;
-
-    private String city;
-
-    private String state;
-
-    private boolean isPreferredMarketing;
-
-    private String spotifyAccount;
-
-    public User(String email, String password) {
-        this.email = email;
-        this.password = password;
-    }
+    private List<String> teams;
 
     // Methods to extend UserDetails
     @Override
