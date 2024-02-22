@@ -1,7 +1,7 @@
 package com.cs206.g2t2.service.serviceImpl;
 
-import com.cs206.g2t2.data.request.AuthenticationRequest;
-import com.cs206.g2t2.data.request.RegisterRequest;
+import com.cs206.g2t2.data.request.auth.AuthenticationRequest;
+import com.cs206.g2t2.data.request.auth.RegisterRequest;
 import com.cs206.g2t2.data.response.AuthenticationResponse;
 import com.cs206.g2t2.data.response.Response;
 import com.cs206.g2t2.data.response.common.SuccessResponse;
@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,16 +34,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final CommonService commonService;
 
     /**
+     * Searches for users in the repository which has the same username.
+     * If user with username can be found in the repository, throw a DuplicatedUsernameException.
+     *
+     * @param username String object containing the username
+     */
+    private void hasExistingUserWithUsername(String username) {
+        if (userRepository.findByUsername(username).isPresent()) {
+            throw new DuplicatedUsernameException(username);
+        }
+    }
+
+    /**
      * @param request RegisterRequest object containing the new user info to be created
      * @return SuccessResponse containing information "User has been created successfully"
      *      or throws the relevant exception from the getUserClassFromRequest method in commonService
      */
     public Response register(RegisterRequest request) {
 
-        //Ensures that the username specified is not present
-        Optional<User> existingUser = userRepository.findByUsername(request.getUsername());
         //If username is present, throw new DuplicatedUsernameException
-        if (existingUser.isPresent()) { throw new DuplicatedUsernameException(request.getUsername()); }
+        hasExistingUserWithUsername(request.getUsername());
 
         //Create User Object
         User user = User.builder()
@@ -53,7 +62,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .imageString(null)
-                .languages(new ArrayList<String>())
+                .language("Any")
+                .country("Any")
                 .bsProfile(new BSProfile())
                 .teams(new ArrayList<String>())
                 .build();
@@ -63,7 +73,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         //If Everything goes smoothly, SuccessResponse will be created
         return SuccessResponse.builder()
-                .response("User has been created successfully")
+                .message("User has been created successfully")
                 .build();
     }
 
@@ -107,14 +117,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      *      otherwise throw DuplicatedUsernameException to show it has been used
      */
     public Response findUsername(String username) {
-        //If username exists, throw new DuplicatedUsernameException(username)
-        if (userRepository.findByUsername(username).isPresent()) {
-            throw new DuplicatedUsernameException(username);
-        }
+
+        //If username exists, throw new DuplicatedUsernameException
+        hasExistingUserWithUsername(username);
 
         //If Everything goes smoothly, response will be created using SuccessResponse
         return SuccessResponse.builder()
-                .response("Username is available")
+                .message("Username is available")
                 .build();
     }
 }
