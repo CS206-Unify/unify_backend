@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +40,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      *      or throws the relevant exception from the getUserClassFromRequest method in commonService
      */
     public Response register(RegisterRequest request) {
+
+        //Ensures that the username specified is not present
+        Optional<User> existingUser = userRepository.findByUsername(request.getUsername());
+        //If username is present, throw new DuplicatedUsernameException
+        if (existingUser.isPresent()) { throw new DuplicatedUsernameException(request.getUsername()); }
 
         //Create User Object
         User user = User.builder()
