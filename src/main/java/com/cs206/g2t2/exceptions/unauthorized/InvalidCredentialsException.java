@@ -1,4 +1,4 @@
-package com.cs206.g2t2.exceptions;
+package com.cs206.g2t2.exceptions.unauthorized;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
