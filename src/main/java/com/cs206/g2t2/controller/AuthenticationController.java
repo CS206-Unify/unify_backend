@@ -23,7 +23,7 @@ public class AuthenticationController {
         Response response = authenticationService.register(request);
 
         //Else, return ok response
-        return new ResponseEntity(response, HttpStatus.OK);
+        return new ResponseEntity(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/authenticate")
