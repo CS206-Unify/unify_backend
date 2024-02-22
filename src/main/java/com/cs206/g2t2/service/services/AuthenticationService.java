@@ -1,7 +1,7 @@
 package com.cs206.g2t2.service.services;
 
-import com.cs206.g2t2.data.request.AuthenticationRequest;
-import com.cs206.g2t2.data.request.RegisterRequest;
+import com.cs206.g2t2.data.request.auth.AuthenticationRequest;
+import com.cs206.g2t2.data.request.auth.RegisterRequest;
 import com.cs206.g2t2.data.response.Response;
 import com.cs206.g2t2.exceptions.badRequest.DuplicatedUsernameException;
 import com.cs206.g2t2.exceptions.unauthorized.InvalidCredentialsException;
