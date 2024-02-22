@@ -19,6 +19,7 @@ public class RegisterRequest implements UserRequest{
 
     @NotBlank(message = "Email is required")
     @Email(regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}",
+            flags = Pattern.Flag.CASE_INSENSITIVE,
             message = "Email must be valid")
     private String email;
 
