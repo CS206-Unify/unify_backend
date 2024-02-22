@@ -3,8 +3,8 @@ package com.cs206.g2t2.service.services;
 import com.cs206.g2t2.data.request.AuthenticationRequest;
 import com.cs206.g2t2.data.request.RegisterRequest;
 import com.cs206.g2t2.data.response.Response;
-import com.cs206.g2t2.exceptions.DuplicatedUsernameException;
-import com.cs206.g2t2.exceptions.InvalidCredentialsException;
+import com.cs206.g2t2.exceptions.badRequest.DuplicatedUsernameException;
+import com.cs206.g2t2.exceptions.unauthorized.InvalidCredentialsException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,8 +13,6 @@ public interface AuthenticationService {
     /**
      * Adds a new user to the repository.
      * If username can be found in the repository, throw a DuplicatedUsernameException.
-     * For updating, if all three password fields are not the same or wrong oldPassword is inputted, throw a
-     * PasswordDoNotMatchException
      *
      * @param request a RegisterRequest object containing the new user info to be created
      * @return SuccessResponse "User has been created successfully"

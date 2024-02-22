@@ -5,8 +5,10 @@ import com.cs206.g2t2.data.request.RegisterRequest;
 import com.cs206.g2t2.data.response.AuthenticationResponse;
 import com.cs206.g2t2.data.response.Response;
 import com.cs206.g2t2.data.response.common.SuccessResponse;
-import com.cs206.g2t2.exceptions.DuplicatedUsernameException;
-import com.cs206.g2t2.exceptions.InvalidCredentialsException;
+import com.cs206.g2t2.exceptions.badRequest.DuplicatedUsernameException;
+import com.cs206.g2t2.exceptions.unauthorized.InvalidCredentialsException;
+import com.cs206.g2t2.exceptions.notFound.UsernameNotFoundException;
+import com.cs206.g2t2.models.BSProfile;
 import com.cs206.g2t2.models.User;
 import com.cs206.g2t2.repository.UserRepository;
 import com.cs206.g2t2.service.services.AuthenticationService;
@@ -19,6 +21,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -29,15 +34,25 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final CommonService commonService;
 
     /**
-     *
-     * @param request a RegisterRequest object containing the new user info to be created
-     * @return a SuccessResponse containing information "User has been created successfully"
+     * @param request RegisterRequest object containing the new user info to be created
+     * @return SuccessResponse containing information "User has been created successfully"
      *      or throws the relevant exception from the getUserClassFromRequest method in commonService
      */
     public Response register(RegisterRequest request) {
 
-        User user = commonService.getUserClassFromRequest(request, null);
+        //Create User Object
+        User user = User.builder()
+                .userCreationDate(LocalDateTime.now())
+                .username(request.getUsername())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .imageString(null)
+                .languages(new ArrayList<String>())
+                .bsProfile(new BSProfile())
+                .teams(new ArrayList<String>())
+                .build();
 
+        //Save user into the repository
         userRepository.save(user);
 
         //If Everything goes smoothly, SuccessResponse will be created
@@ -47,14 +62,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     /**
-     *
-     * @param request a AuthenticationRequest object containing the username and password of user to be authenticated
-     * @return an AuthenticationResponse with information on the jwt token to be returned to the user for
+     * @param request AuthenticationRequest object containing the username and password of user to be authenticated
+     * @return AuthenticationResponse with information on the jwt token to be returned to the user for
      *      authenticated api path access
      */
     public Response authenticate(AuthenticationRequest request) {
 
-        //Rethink logic and fix it for better understandability
+        //Attempt to perform authentication
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -62,16 +76,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                             request.getPassword()
                     )
             );
-
+        //If Authentication fails, the BadCredentialsException will be caught.
         } catch (BadCredentialsException e) {
-
             //Throws an InvalidCredentialsException, if username or password is incorrect.
             throw new InvalidCredentialsException();
-
         }
 
+        //Finds User object from database by username
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException(request.getUsername()));
+
         //If authenticated, create jwt token and return an AuthenticationResponse containing jwt token
-        User user = userRepository.findByUsername(request.getUsername()).orElseThrow();
         String jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
