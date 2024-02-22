@@ -6,6 +6,7 @@ import com.cs206.g2t2.data.response.Response;
 import com.cs206.g2t2.service.services.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,7 @@ public class AuthenticationController {
         Response response = authenticationService.register(request);
 
         //Else, return ok response
-        return ResponseEntity.ok(response);
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 
     @PostMapping("/authenticate")
@@ -32,7 +33,7 @@ public class AuthenticationController {
         Response response = authenticationService.authenticate(request);
 
         //Else, return ok response
-        return ResponseEntity.ok(response);
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 
     @GetMapping("/username/{username}")
@@ -42,7 +43,7 @@ public class AuthenticationController {
         Response response = authenticationService.findUsername(username);
 
         //Else, return ok response
-        return ResponseEntity.ok(response);
+        return new ResponseEntity(response, HttpStatus.OK);
 
     }
 }
