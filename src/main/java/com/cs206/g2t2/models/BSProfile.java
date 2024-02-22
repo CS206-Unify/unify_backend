@@ -12,8 +12,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Builder
 public class BSProfile {
 
+    //Contains the user's region of BS play
     private String region;
 
+    //Contains the user's personal bio of BS
     private String personalBio;
 
 }
