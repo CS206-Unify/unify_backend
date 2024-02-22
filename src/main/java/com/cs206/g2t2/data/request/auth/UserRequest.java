@@ -1,4 +1,4 @@
-package com.cs206.g2t2.data.request;
+package com.cs206.g2t2.data.request.auth;
 
 import java.time.LocalDateTime;
 
