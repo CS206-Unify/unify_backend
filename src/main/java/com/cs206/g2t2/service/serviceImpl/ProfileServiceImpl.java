@@ -1,6 +1,7 @@
 package com.cs206.g2t2.service.serviceImpl;
 
 import com.cs206.g2t2.data.request.auth.UpdateProfileRequest;
+import com.cs206.g2t2.data.request.profile.UpdateBsIdRequest;
 import com.cs206.g2t2.data.request.profile.UpdateBsProfileRequest;
 import com.cs206.g2t2.data.response.Response;
 import com.cs206.g2t2.data.response.common.SuccessResponse;
@@ -86,13 +87,36 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     /**
+     * @param request a UpdateBsIdRequest containing the new user's Brawl Star ID to be updated in database
+     * @param username a String containing the username of the user obtained from the token
+     * @return SuccessResponse "User's Brawl Star ID has been updated successfully"
+     */
+    public Response updateBsId(UpdateBsIdRequest request, String username) throws UsernameNotFoundException {
+
+        //Finds user in repository else throws UsernameNotFoundException
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        //Updates the region and personal bio
+        user.getBsProfile().setBrawlStarId(request.getBrawlStarsId());
+
+        //Saves user back into repository
+        userRepository.save(user);
+
+        //Returns SuccessResponse if all information could be updated
+        return SuccessResponse.builder()
+                .message("User's Brawl Star ID has been updated successfully")
+                .build();
+    }
+
+    /**
      * @param username a String object containing the username of user to be deleted
      * @return SuccessResponse "User has been deleted successfully"
      */
     @Override
     public Response deleteUserProfile(String username) throws UsernameNotFoundException {
-        //Finds user in repository else throws UsernameNotFoundException
-        User user = userRepository.findByUsername(username)
+        //Finds user in repository, else throws UsernameNotFoundException
+        userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
         //Deletes user from repository
