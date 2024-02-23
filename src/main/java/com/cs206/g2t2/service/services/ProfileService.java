@@ -3,9 +3,7 @@ package com.cs206.g2t2.service.services;
 import com.cs206.g2t2.data.request.auth.UpdateProfileRequest;
 import com.cs206.g2t2.data.request.profile.UpdateBsProfileRequest;
 import com.cs206.g2t2.data.response.Response;
-import com.cs206.g2t2.data.response.common.SuccessResponse;
 import com.cs206.g2t2.exceptions.notFound.UsernameNotFoundException;
-import com.cs206.g2t2.models.User;
 import org.springframework.stereotype.Service;
 
 @Service
