@@ -19,6 +19,22 @@ public class ProfileServiceImpl implements ProfileService {
     private final UserRepository userRepository;
 
     /**
+     * @param username a String object containing the username to be searched
+     * @return SingleUserResponse object containing the user
+     */
+    @Override
+    public Response getUserProfile(String username) throws UsernameNotFoundException {
+        //Finds user in repository else throws UsernameNotFoundException
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        //Returns SingleUserResponse if user can be found
+        return SingleUserResponse.builder()
+                .user(user)
+                .build();
+    }
+
+    /**
      * @param request a UpdateProfileRequest object containing the new user profile info to be updated
      * @return SuccessResponse "User Profile has been updated successfully"
      */
@@ -70,18 +86,21 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     /**
-     * @param username a String object containing the username to be searched
-     * @return SingleUserResponse object containing the user
+     * @param username a String object containing the username of user to be deleted
+     * @return SuccessResponse "User has been deleted successfully"
      */
     @Override
-    public Response getUserProfile(String username) throws UsernameNotFoundException {
+    public Response deleteUserProfile(String username) throws UsernameNotFoundException {
         //Finds user in repository else throws UsernameNotFoundException
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
+        //Deletes user from repository
+        userRepository.deleteByUsername(username);
+
         //Returns SingleUserResponse if user can be found
-        return SingleUserResponse.builder()
-                .user(user)
+        return SuccessResponse.builder()
+                .message("User has been deleted successfully")
                 .build();
     }
 }
