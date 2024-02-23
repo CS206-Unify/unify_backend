@@ -21,6 +21,29 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
+    @GetMapping("/profile")
+    public ResponseEntity<Response> getUserProfile(@AuthenticationPrincipal UserDetails userDetails) {
+
+        // Get the username from the userDetails of the authenticated user
+        String username = userDetails.getUsername();
+
+        //Find Profile based on the username by findProfile method in profileService
+        //Throws a InvalidTokenException if username cannot be found in repository
+        Response response = profileService.getUserProfile(username);
+
+        //If successful, the response is encapsulated with HTTP code of 200(ok) and contains the User object
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/profile/{username}")
+    public ResponseEntity<Response> findUserProfileByUsername(@PathVariable String username) {
+        // Find a profile based on the username provided
+        // Throws a InvalidUsername if username cannot be found in repository
+        Response response = profileService.getUserProfile(username);
+
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
+
     @PutMapping("/profile")
     public ResponseEntity<Response> updateProfile(@Valid @RequestBody UpdateProfileRequest request,
                                                   @AuthenticationPrincipal UserDetails userDetails) {
@@ -51,26 +74,17 @@ public class ProfileController {
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
-    @GetMapping("/profile")
-    public ResponseEntity<Response> getUserProfile(@AuthenticationPrincipal UserDetails userDetails) {
+    @DeleteMapping("/profile")
+    public ResponseEntity<Response> deleteProfile(@AuthenticationPrincipal UserDetails userDetails) {
 
         // Get the username from the userDetails of the authenticated user
         String username = userDetails.getUsername();
 
-        //Find Profile based on the username by findProfile method in profileService
-        //Throws a InvalidTokenException if username cannot be found in repository
-        Response response = profileService.getUserProfile(username);
+        //Update Profile using updateProfile method in profileService
+        //Throws a UsernameNotFoundException if username cannot be found in repository
+        Response response = profileService.deleteUserProfile(username);
 
-        //If successful, the response is encapsulated with HTTP code of 200(ok) and contains the User object
-        return new ResponseEntity(response, HttpStatus.OK);
-    }
-
-    @GetMapping("/profile/{username}")
-    public ResponseEntity<Response> findUserProfileByUsername(@PathVariable String username) {
-        // Find a profile based on the username provided
-        // Throws a InvalidUsername if username cannot be found in repository
-        Response response = profileService.getUserProfile(username);
-
+        //Else, return ok response
         return new ResponseEntity(response, HttpStatus.OK);
     }
 }
