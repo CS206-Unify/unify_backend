@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class BSProfile {
 
+    //Contains the user's brawl star ID
+    private String brawlStarId;
+
     //Contains the user's region of BS play
     private String region;
 
