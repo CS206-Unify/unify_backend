@@ -22,7 +22,5 @@ public class UpdateProfileRequest implements UserRequest {
     //language stores the user's preferred language
     @NotBlank(message = "Language is required")
     private String language;
-
-    // Not sure if integration with Google, Supercell, Garena and Moonton requires additional data to be saved
 }
 
