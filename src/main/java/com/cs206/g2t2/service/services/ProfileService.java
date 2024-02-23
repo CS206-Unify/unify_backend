@@ -1,8 +1,8 @@
 package com.cs206.g2t2.service.services;
 
 import com.cs206.g2t2.data.request.auth.UpdateProfileRequest;
-import com.cs206.g2t2.data.request.profile.UpdateBsIdRequest;
-import com.cs206.g2t2.data.request.profile.UpdateBsProfileRequest;
+import com.cs206.g2t2.data.request.profile.UpdateBSIdRequest;
+import com.cs206.g2t2.data.request.profile.UpdateGameProfileRequest;
 import com.cs206.g2t2.data.response.Response;
 import com.cs206.g2t2.exceptions.notFound.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ public interface ProfileService {
      * @param username a String containing the username of the user obtained from the token
      * @return SuccessResponse "User's Brawl Star ID has been updated successfully"
      */
-    Response updateBsId(UpdateBsIdRequest request, String username) throws UsernameNotFoundException;
+    Response updateBsId(UpdateBSIdRequest request, String username) throws UsernameNotFoundException;
 
     /**
      * Updates a user's Brawl Star profile in the repository.
@@ -47,7 +47,7 @@ public interface ProfileService {
      * @param username a String containing the username of the user obtained from the token
      * @return SuccessResponse "User's Brawl Star Profile has been updated successfully"
      */
-    Response updateBsProfile(UpdateBsProfileRequest request, String username) throws UsernameNotFoundException;
+    Response updateBsProfile(UpdateGameProfileRequest request, String username) throws UsernameNotFoundException;
 
     /**
      * Deletes a user from the repository.

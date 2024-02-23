@@ -1,8 +1,8 @@
 package com.cs206.g2t2.controller;
 
 import com.cs206.g2t2.data.request.auth.UpdateProfileRequest;
-import com.cs206.g2t2.data.request.profile.UpdateBsIdRequest;
-import com.cs206.g2t2.data.request.profile.UpdateBsProfileRequest;
+import com.cs206.g2t2.data.request.profile.UpdateBSIdRequest;
+import com.cs206.g2t2.data.request.profile.UpdateGameProfileRequest;
 import com.cs206.g2t2.data.response.Response;
 import com.cs206.g2t2.service.services.ProfileService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -61,7 +61,7 @@ public class ProfileController {
     }
 
     @PutMapping("/bsId")
-    public ResponseEntity<Response> updateBsId(@Valid @RequestBody UpdateBsIdRequest request,
+    public ResponseEntity<Response> updateBsId(@Valid @RequestBody UpdateBSIdRequest request,
                                                     @AuthenticationPrincipal UserDetails userDetails) {
 
         // Get the username from the userDetails of the authenticated user
@@ -76,7 +76,7 @@ public class ProfileController {
     }
 
     @PutMapping("/bsProfile")
-    public ResponseEntity<Response> updateBsProfile(@Valid @RequestBody UpdateBsProfileRequest request,
+    public ResponseEntity<Response> updateBsProfile(@Valid @RequestBody UpdateGameProfileRequest request,
                                                     @AuthenticationPrincipal UserDetails userDetails) {
 
         // Get the username from the userDetails of the authenticated user

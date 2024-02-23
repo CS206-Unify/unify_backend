@@ -1,8 +1,8 @@
 package com.cs206.g2t2.service.serviceImpl;
 
 import com.cs206.g2t2.data.request.auth.UpdateProfileRequest;
-import com.cs206.g2t2.data.request.profile.UpdateBsIdRequest;
-import com.cs206.g2t2.data.request.profile.UpdateBsProfileRequest;
+import com.cs206.g2t2.data.request.profile.UpdateBSIdRequest;
+import com.cs206.g2t2.data.request.profile.UpdateGameProfileRequest;
 import com.cs206.g2t2.data.response.Response;
 import com.cs206.g2t2.data.response.common.SuccessResponse;
 import com.cs206.g2t2.data.response.user.SingleUserResponse;
@@ -67,7 +67,7 @@ public class ProfileServiceImpl implements ProfileService {
      * @return SuccessResponse "User Brawl Star Profile has been updated successfully"
      */
     @Override
-    public Response updateBsProfile(UpdateBsProfileRequest request, String username) throws UsernameNotFoundException {
+    public Response updateBsProfile(UpdateGameProfileRequest request, String username) throws UsernameNotFoundException {
 
         //Finds user in repository else throws UsernameNotFoundException
         User user = userRepository.findByUsername(username)
@@ -91,7 +91,7 @@ public class ProfileServiceImpl implements ProfileService {
      * @param username a String containing the username of the user obtained from the token
      * @return SuccessResponse "User's Brawl Star ID has been updated successfully"
      */
-    public Response updateBsId(UpdateBsIdRequest request, String username) throws UsernameNotFoundException {
+    public Response updateBsId(UpdateBSIdRequest request, String username) throws UsernameNotFoundException {
 
         //Finds user in repository else throws UsernameNotFoundException
         User user = userRepository.findByUsername(username)

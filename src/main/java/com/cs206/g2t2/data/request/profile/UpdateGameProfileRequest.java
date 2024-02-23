@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateBsProfileRequest {
+public class UpdateGameProfileRequest {
 
     //Contains the user's region of play
     @NotBlank(message = "Region is required")

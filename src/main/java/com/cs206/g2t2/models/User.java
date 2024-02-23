@@ -44,8 +44,6 @@ public class User implements UserDetails { // Implements UserDetails so that the
     //language stores the user's preferred language
     private String language;
 
-    // Not sure if integration with Google, Supercell, Garena and Moonton requires additional data to be saved
-
     //bsProfile stores the Brawl Stars Profile of the user
     private BSProfile bsProfile;
 
