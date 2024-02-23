@@ -13,4 +13,11 @@ public interface UserRepository extends MongoRepository<User, String> {
      * @param username String object containing username to be searched
      */
     Optional<User> findByUsername(String username);
+
+    /**
+     * Deletes User by username
+     *
+     * @param username String object containing username of user to be deleted
+     */
+    void deleteByUsername(String username);
 }
