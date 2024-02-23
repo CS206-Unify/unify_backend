@@ -1,6 +1,7 @@
 package com.cs206.g2t2.controller;
 
 import com.cs206.g2t2.data.request.auth.UpdateProfileRequest;
+import com.cs206.g2t2.data.request.profile.UpdateBsIdRequest;
 import com.cs206.g2t2.data.request.profile.UpdateBsProfileRequest;
 import com.cs206.g2t2.data.response.Response;
 import com.cs206.g2t2.service.services.ProfileService;
@@ -54,6 +55,21 @@ public class ProfileController {
         //Update Profile using updateProfile method in profileService
         //Throws a UsernameNotFoundException if username cannot be found in repository
         Response response = profileService.updateProfile(request, username);
+
+        //Else, return ok response
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/bsId")
+    public ResponseEntity<Response> updateBsId(@Valid @RequestBody UpdateBsIdRequest request,
+                                                    @AuthenticationPrincipal UserDetails userDetails) {
+
+        // Get the username from the userDetails of the authenticated user
+        String username = userDetails.getUsername();
+
+        //Update Profile using updateProfile method in profileService
+        //Throws a UsernameNotFoundException if username cannot be found in repository
+        Response response = profileService.updateBsId(request, username);
 
         //Else, return ok response
         return new ResponseEntity(response, HttpStatus.OK);
