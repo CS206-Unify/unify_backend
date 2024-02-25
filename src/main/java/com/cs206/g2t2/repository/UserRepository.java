@@ -8,6 +8,13 @@ import java.util.Optional;
 public interface UserRepository extends MongoRepository<User, String> {
 
     /**
+     *  Finds Optional<User> by _id
+     *
+     * @param _id String object containing _id to be searched
+     */
+    Optional<User> findBy_id(String _id);
+
+    /**
      *  Finds Optional<User> by username
      *
      * @param username String object containing username to be searched
