@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.UNAUTHORIZED) // 401 Error
-public class InvalidCredentialsException extends RuntimeException {
+public class InvalidCredentialsException extends UnauthorizedException {
 
     private static final long serialVersionUID = 1L;
 
