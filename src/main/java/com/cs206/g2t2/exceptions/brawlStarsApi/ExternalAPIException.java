@@ -1,12 +1,14 @@
 package com.cs206.g2t2.exceptions.brawlStarsApi;
 
+import lombok.Data;
 import org.springframework.http.HttpStatusCode;
 
-public class ApiServerException extends RuntimeException {
+@Data
+public class ExternalAPIException extends RuntimeException {
 
     private int statusCode;
 
-    public ApiServerException(HttpStatusCode httpStatusCode, String message) {
+    public ExternalAPIException(HttpStatusCode httpStatusCode, String message) {
         super(message);
         statusCode = httpStatusCode.value();
     }
