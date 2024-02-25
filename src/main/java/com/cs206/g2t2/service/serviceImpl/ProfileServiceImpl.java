@@ -87,11 +87,11 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     /**
-     * @param request a UpdateBsIdRequest containing the new user's Brawl Star ID to be updated in database
+     * @param request a UpdateBsPlayerTagRequest containing the new user's Brawl Star ID to be updated in database
      * @param username a String containing the username of the user obtained from the token
      * @return SuccessResponse "User's Brawl Star ID has been updated successfully"
      */
-    public Response updateBsId(UpdateBsPlayerTagRequest request, String username) throws UsernameNotFoundException {
+    public Response updateBsPlayerTag(UpdateBsPlayerTagRequest request, String username) throws UsernameNotFoundException {
 
         //Finds user in repository else throws UsernameNotFoundException
         User user = userRepository.findByUsername(username)

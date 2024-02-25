@@ -37,7 +37,7 @@ public interface ProfileService {
      * @param username a String containing the username of the user obtained from the token
      * @return SuccessResponse "User's Brawl Star ID has been updated successfully"
      */
-    Response updateBsId(UpdateBsPlayerTagRequest request, String username) throws UsernameNotFoundException;
+    Response updateBsPlayerTag(UpdateBsPlayerTagRequest request, String username) throws UsernameNotFoundException;
 
     /**
      * Updates a user's Brawl Star profile in the repository.
