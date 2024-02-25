@@ -1,7 +1,7 @@
 package com.cs206.g2t2.service.serviceImpl;
 
 import com.cs206.g2t2.data.request.auth.UpdateProfileRequest;
-import com.cs206.g2t2.data.request.profile.UpdateBSIdRequest;
+import com.cs206.g2t2.data.request.profile.UpdateBsPlayerTagRequest;
 import com.cs206.g2t2.data.request.profile.UpdateGameProfileRequest;
 import com.cs206.g2t2.data.response.Response;
 import com.cs206.g2t2.data.response.common.SuccessResponse;
@@ -91,14 +91,14 @@ public class ProfileServiceImpl implements ProfileService {
      * @param username a String containing the username of the user obtained from the token
      * @return SuccessResponse "User's Brawl Star ID has been updated successfully"
      */
-    public Response updateBsId(UpdateBSIdRequest request, String username) throws UsernameNotFoundException {
+    public Response updateBsId(UpdateBsPlayerTagRequest request, String username) throws UsernameNotFoundException {
 
         //Finds user in repository else throws UsernameNotFoundException
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
         //Updates the region and personal bio
-        user.getBsProfile().setBrawlStarId(request.getBrawlStarsId());
+        user.getBsProfile().setPlayerTag(request.getPlayerTag());
 
         //Saves user back into repository
         userRepository.save(user);

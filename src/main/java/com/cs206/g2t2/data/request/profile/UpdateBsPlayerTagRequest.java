@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateBSIdRequest {
+public class UpdateBsPlayerTagRequest {
     //Contains the user's Brawl Stars ID
     @NotBlank(message = "Brawl Stars ID is required")
-    private String brawlStarsId;
+    private String playerTag;
 }
