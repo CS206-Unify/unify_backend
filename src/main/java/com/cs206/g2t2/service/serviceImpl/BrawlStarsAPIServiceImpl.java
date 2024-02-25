@@ -74,7 +74,7 @@ public class BrawlStarsAPIServiceImpl implements BrawlStarsAPIService {
 
         //Sets headers values of request and constructs a HttpEntity
         HttpHeaders headers = new HttpHeaders();
-//        headers.setBearerAuth(apiKey);
+        headers.setBearerAuth(apiKey);
         headers.set("Accept", "application/json");
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
