@@ -1,9 +1,10 @@
 package com.cs206.g2t2.controller;
 
 import com.cs206.g2t2.data.request.auth.UpdateProfileRequest;
-import com.cs206.g2t2.data.request.profile.UpdateBSIdRequest;
+import com.cs206.g2t2.data.request.profile.UpdateBsPlayerTagRequest;
 import com.cs206.g2t2.data.request.profile.UpdateGameProfileRequest;
 import com.cs206.g2t2.data.response.Response;
+import com.cs206.g2t2.service.services.BrawlStarsAPIService;
 import com.cs206.g2t2.service.services.ProfileService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class ProfileController {
 
     private final ProfileService profileService;
+    private final BrawlStarsAPIService brawlStarsAPIService;
 
     @GetMapping("/profile")
     public ResponseEntity<Response> getUserProfile(@AuthenticationPrincipal UserDetails userDetails) {
@@ -45,6 +47,14 @@ public class ProfileController {
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
+    @GetMapping("/bsStats")
+    public ResponseEntity<Object> displayBsStats(@AuthenticationPrincipal UserDetails userDetails) {
+        // Get the username from the userDetails of the authenticated user
+        String username = userDetails.getUsername();
+
+        return brawlStarsAPIService.displayBsStats(username);
+    }
+
     @PutMapping("/profile")
     public ResponseEntity<Response> updateProfile(@Valid @RequestBody UpdateProfileRequest request,
                                                   @AuthenticationPrincipal UserDetails userDetails) {
@@ -61,7 +71,7 @@ public class ProfileController {
     }
 
     @PutMapping("/bsId")
-    public ResponseEntity<Response> updateBsId(@Valid @RequestBody UpdateBSIdRequest request,
+    public ResponseEntity<Response> updateBsId(@Valid @RequestBody UpdateBsPlayerTagRequest request,
                                                     @AuthenticationPrincipal UserDetails userDetails) {
 
         // Get the username from the userDetails of the authenticated user
