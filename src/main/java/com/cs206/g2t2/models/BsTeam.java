@@ -49,5 +49,5 @@ public class BsTeam {
     private int minSoloWins;
 
     //memberList stores the list of members that the team has
-    private List<String> memberList;
+    private List<TeamMember> memberList;
 }
