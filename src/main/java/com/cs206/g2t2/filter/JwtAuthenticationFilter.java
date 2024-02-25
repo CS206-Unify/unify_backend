@@ -24,14 +24,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
     public static final String[] whiteListedRoutes = new String[] {
-            // normal user paths
+            // Normal user paths
             "/api/auth/register",
             "/api/auth/authenticate",
             "/api/auth/username/.*",
 
-            // admin user (additional features in the future)
-
-            // others
+            // Others
             "/error",
     };
 
@@ -114,10 +112,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         /*
          * If condition is met, the filterChain continues processing the request and
-         * response without any additional
-         * authentication or authorization checks. It effectively allows the request to
-         * pass
-         * through without requiring JWT validation.
+         * response without any additional authentication or authorization checks.
+         * It effectively allows the request to pass through without requiring JWT validation.
          */
         filterChain.doFilter(request, response);
     }

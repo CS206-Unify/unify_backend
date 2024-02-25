@@ -25,14 +25,12 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfiguration {
 
     public static final String[] whiteListedRoutes = new String[] {
-        // normal user paths
+        // Normal user paths
         "/api/auth/register",
         "/api/auth/authenticate",
         "/api/auth/username/.*",
 
-        // admin user (additional features in the future)
-
-        // others
+        // Others
         "/error",
     };
 
