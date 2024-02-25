@@ -48,11 +48,15 @@ public class ProfileController {
     }
 
     @GetMapping("/bsStats")
-    public ResponseEntity<Object> displayBsStats(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<Response> displayBsStats(@AuthenticationPrincipal UserDetails userDetails) {
         // Get the username from the userDetails of the authenticated user
         String username = userDetails.getUsername();
 
-        return brawlStarsAPIService.displayBsStats(username);
+        //Update Profile using updateProfile method in profileService
+        //Throws a UsernameNotFoundException if username cannot be found in repository
+        Response response = brawlStarsAPIService.getBsStats(username);
+
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 
     @PutMapping("/profile")
@@ -70,8 +74,8 @@ public class ProfileController {
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
-    @PutMapping("/bsId")
-    public ResponseEntity<Response> updateBsId(@Valid @RequestBody UpdateBsPlayerTagRequest request,
+    @PutMapping("/bsPlayerTag")
+    public ResponseEntity<Response> updateBsPlayerTag(@Valid @RequestBody UpdateBsPlayerTagRequest request,
                                                     @AuthenticationPrincipal UserDetails userDetails) {
 
         // Get the username from the userDetails of the authenticated user
@@ -79,9 +83,21 @@ public class ProfileController {
 
         //Update Profile using updateProfile method in profileService
         //Throws a UsernameNotFoundException if username cannot be found in repository
-        Response response = profileService.updateBsId(request, username);
+        Response response = profileService.updateBsPlayerTag(request, username);
 
         //Else, return ok response
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/bsStats")
+    public ResponseEntity<Response> updateBsStats(@AuthenticationPrincipal UserDetails userDetails) {
+        // Get the username from the userDetails of the authenticated user
+        String username = userDetails.getUsername();
+
+        //Update Profile using updateProfile method in profileService
+        //Throws a UsernameNotFoundException if username cannot be found in repository
+        Response response = brawlStarsAPIService.updateBsStats(username);
+
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
