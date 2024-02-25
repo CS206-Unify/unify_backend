@@ -29,11 +29,11 @@ public class RestTemplateResponseErrorHandler implements ResponseErrorHandler {
         if (httpResponse.getStatusCode() == HttpStatus.BAD_REQUEST) {
             throw new ApiServerException(httpResponse.getStatusCode(), "Client provided incorrect parameters for the request.");
 
-        } else if (httpResponse.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+        } else if (httpResponse.getStatusCode() == HttpStatus.FORBIDDEN) {
             throw new ApiServerException(httpResponse.getStatusCode(), "Access denied, either because of missing/incorrect credentials or used API token does not grant access to the requested resource.");
 
         } else if (httpResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
-            throw new ApiClientException(httpResponse.getStatusCode(), "Resource was not found, invalid Player Tag");
+            throw new ApiClientException(httpResponse.getStatusCode(), "Resource was not found, invalid Player Tag.");
 
         } else if (httpResponse.getStatusCode() == HttpStatus.TOO_MANY_REQUESTS) {
             throw new ApiServerException(httpResponse.getStatusCode(), "Request was throttled, because amount of requests was above the threshold defined for the used API token.");
