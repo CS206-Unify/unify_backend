@@ -38,7 +38,15 @@ public class BrawlStarsAPIServiceImpl implements BrawlStarsAPIService {
 
     private final UserRepository userRepository;
 
-    private String getPlayerTagFromUser(String username) {
+    /**
+     * Private Helper: Perform API call to obtain Brawl Star Player Stats
+     * If user is not found based on username, throw UsernameNotFoundException
+     * If no player tag can be found under the username, throw BsPlayerTagNotFoundException
+     *
+     * @param username a String containing the username of the user obtained from the token
+     * @return Player object containing user's player stats
+     */
+    private String getPlayerTagFromUser(String username) throws UsernameNotFoundException, BsPlayerTagNotFoundException {
         //Obtain user from userRepository and throws UsernameNotFoundException if user not found
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
@@ -53,7 +61,13 @@ public class BrawlStarsAPIServiceImpl implements BrawlStarsAPIService {
         return playerTag;
     }
 
-    public Player findPlayerFromUsername(String username) throws UsernameNotFoundException, BsPlayerTagNotFoundException {
+    /**
+     * Private Helper: Perform API call to obtain Brawl Star Player Stats
+     *
+     * @param username a String containing the username of the user obtained from the token
+     * @return Player object containing user's player stats
+     */
+    private Player findPlayerFromUsername(String username) {
         //Obtains playerTag from username
         String playerTag = getPlayerTagFromUser(username);
 
@@ -87,9 +101,12 @@ public class BrawlStarsAPIServiceImpl implements BrawlStarsAPIService {
         return responseEntity.getBody();
     }
 
-
+    /**
+     * @param username a String containing the username of the user obtained from the token
+     * @return BsPlayerResponse containing the Player object in the body
+     */
     @Override
-    public Response getBsStats(String username) throws UsernameNotFoundException, BsPlayerTagNotFoundException {
+    public Response getBsStats(String username) {
         //Finds the Brawl Stars player from username
         Player player = findPlayerFromUsername(username);
 
@@ -99,6 +116,10 @@ public class BrawlStarsAPIServiceImpl implements BrawlStarsAPIService {
                 .build();
     }
 
+    /**
+     * @param username a String containing the username of the user obtained from the token
+     * @return SuccessResponse "User's Brawl Star Stats has been updated successfully"
+     */
     @Override
     public Response updateBsStats(String username) {
         //Finds the Brawl Stars player from username

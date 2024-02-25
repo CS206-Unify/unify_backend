@@ -30,12 +30,12 @@ public interface ProfileService {
     Response updateProfile(UpdateProfileRequest request, String username) throws UsernameNotFoundException;
 
     /**
-     * Updates a user's Brawl Star ID in the repository.
+     * Updates a user's Brawl Star Player Tag in the repository.
      * If username cannot be found in the repository, throw a UsernameNotFoundException.
      *
-     * @param request a UpdateBsIdRequest containing the new user's Brawl Star ID to be updated in database
+     * @param request a UpdateBsPlayerTagRequest containing the new user's Brawl Star ID to be updated in database
      * @param username a String containing the username of the user obtained from the token
-     * @return SuccessResponse "User's Brawl Star ID has been updated successfully"
+     * @return SuccessResponse "User's Brawl Star Player Tag has been updated successfully"
      */
     Response updateBsPlayerTag(UpdateBsPlayerTagRequest request, String username) throws UsernameNotFoundException;
 
@@ -43,7 +43,7 @@ public interface ProfileService {
      * Updates a user's Brawl Star profile in the repository.
      * If username cannot be found in the repository, throw a UsernameNotFoundException.
      *
-     * @param request a UpdateProfileRequest object containing the new user's Brawl Star profile info to be updated
+     * @param request a UpdateGameProfileRequest object containing the new user's Brawl Star profile info to be updated
      * @param username a String containing the username of the user obtained from the token
      * @return SuccessResponse "User's Brawl Star Profile has been updated successfully"
      */
