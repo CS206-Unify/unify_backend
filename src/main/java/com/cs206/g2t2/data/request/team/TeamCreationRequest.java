@@ -26,7 +26,6 @@ public class TeamCreationRequest {
     private String region;
 
     // maximumTeamSize stores the maximum capacity of the team
-    @NotBlank(message = "Maximum Team Size is required")
     @Min(value = 3, message = "Maximum Team Size must be more than or equal to {value}")
-    private Integer maximumTeamSize;
+    private int maximumTeamSize;
 }
