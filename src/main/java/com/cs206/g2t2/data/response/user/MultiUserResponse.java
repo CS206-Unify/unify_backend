@@ -14,5 +14,5 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MultiUserResponse implements Response {
-    protected List<User> user;
+    protected List<User> users;
 }
