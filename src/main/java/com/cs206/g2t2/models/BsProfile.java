@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class BSProfile {
+public class BsProfile {
 
     //Contains the user's brawl star ID
     private String playerTag;

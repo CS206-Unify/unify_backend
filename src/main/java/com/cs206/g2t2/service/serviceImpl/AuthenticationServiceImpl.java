@@ -8,7 +8,7 @@ import com.cs206.g2t2.data.response.common.SuccessResponse;
 import com.cs206.g2t2.exceptions.badRequest.DuplicatedUsernameException;
 import com.cs206.g2t2.exceptions.unauthorized.InvalidCredentialsException;
 import com.cs206.g2t2.exceptions.notFound.UsernameNotFoundException;
-import com.cs206.g2t2.models.BSProfile;
+import com.cs206.g2t2.models.BsProfile;
 import com.cs206.g2t2.models.User;
 import com.cs206.g2t2.repository.UserRepository;
 import com.cs206.g2t2.service.services.AuthenticationService;
@@ -64,7 +64,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .imageString(null)
                 .language("Any")
                 .country("Any")
-                .bsProfile(new BSProfile())
+                .bsProfile(new BsProfile())
                 .teams(new ArrayList<String>())
                 .build();
 

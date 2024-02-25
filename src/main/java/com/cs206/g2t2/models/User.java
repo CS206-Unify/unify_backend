@@ -45,7 +45,7 @@ public class User implements UserDetails { // Implements UserDetails so that the
     private String language;
 
     //bsProfile stores the Brawl Stars Profile of the user
-    private BSProfile bsProfile;
+    private BsProfile bsProfile;
 
     //teams stores the list of teamId that the user is within
     private List<String> teams;
