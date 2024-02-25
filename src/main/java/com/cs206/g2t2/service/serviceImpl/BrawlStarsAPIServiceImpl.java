@@ -17,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -71,31 +72,23 @@ public class BrawlStarsAPIServiceImpl implements BrawlStarsAPIService {
         //Obtains playerTag from username
         String playerTag = getPlayerTagFromUser(username);
 
-        //Stores the ResponseEntity of the API call
-        ResponseEntity<Player> responseEntity = null;
+        //Sets headers values of request and constructs a HttpEntity
+        HttpHeaders headers = new HttpHeaders();
+//        headers.setBearerAuth(apiKey);
+        headers.set("Accept", "application/json");
+        HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        try {
-            //Sets headers values of request and constructs a HttpEntity
-            HttpHeaders headers = new HttpHeaders();
-            headers.setBearerAuth(apiKey);
-            headers.set("Accept", "application/json");
-            HttpEntity<String> entity = new HttpEntity<>(headers);
+        //Constructs the URI for the API call to obtain playerInfo
+        String url = brawlStarsInstanceUrl + playerInfoPath + playerTag;
+        URI uri = URI.create(url);
 
-            //Constructs the URI for the API call to obtain playerInfo
-            URI uri = URI.create(brawlStarsInstanceUrl + playerInfoPath + playerTag);
-
-            //Make a GET call to the API
-            responseEntity = restTemplate.exchange(
-                    uri,
-                    HttpMethod.GET,
-                    entity,
-                    Player.class
-            );
-
-        } catch (Exception e) {
-            //Access what caused the exception and throw appropriate exception
-            throw new RuntimeException(e.getMessage());
-        }
+        //Make a GET call to the API
+        ResponseEntity<Player> responseEntity = restTemplate.exchange(
+                uri,
+                HttpMethod.GET,
+                entity,
+                Player.class
+        );
 
         //Returns Player in ResponseEntity
         return responseEntity.getBody();
