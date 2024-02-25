@@ -6,7 +6,7 @@ import com.cs206.g2t2.data.request.profile.UpdateGameProfileRequest;
 import com.cs206.g2t2.data.response.Response;
 import com.cs206.g2t2.data.response.common.SuccessResponse;
 import com.cs206.g2t2.data.response.user.SingleUserResponse;
-import com.cs206.g2t2.exceptions.notFound.UsernameNotFoundException;
+import com.cs206.g2t2.exceptions.notFound.UserNotFoundException;
 import com.cs206.g2t2.models.User;
 import com.cs206.g2t2.repository.UserRepository;
 import com.cs206.g2t2.service.services.ProfileService;
@@ -24,10 +24,10 @@ public class ProfileServiceImpl implements ProfileService {
      * @return SingleUserResponse object containing the user
      */
     @Override
-    public Response getUserProfile(String username) throws UsernameNotFoundException {
+    public Response getUserProfile(String username) throws UserNotFoundException {
         //Finds user in repository else throws UsernameNotFoundException
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
+                .orElseThrow(() -> new UserNotFoundException(username));
 
         //Returns SingleUserResponse if user can be found
         return SingleUserResponse.builder()
@@ -40,11 +40,11 @@ public class ProfileServiceImpl implements ProfileService {
      * @return SuccessResponse "User Profile has been updated successfully"
      */
     @Override
-    public Response updateProfile(UpdateProfileRequest request, String username) throws UsernameNotFoundException {
+    public Response updateProfile(UpdateProfileRequest request, String username) throws UserNotFoundException {
 
         //Finds user in repository else throws UsernameNotFoundException
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
+                .orElseThrow(() -> new UserNotFoundException(username));
 
         //Updates country and language into user
         user.setCountry(request.getCountry());
@@ -67,11 +67,11 @@ public class ProfileServiceImpl implements ProfileService {
      * @return SuccessResponse "User Brawl Star Profile has been updated successfully"
      */
     @Override
-    public Response updateBsProfile(UpdateGameProfileRequest request, String username) throws UsernameNotFoundException {
+    public Response updateBsProfile(UpdateGameProfileRequest request, String username) throws UserNotFoundException {
 
         //Finds user in repository else throws UsernameNotFoundException
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
+                .orElseThrow(() -> new UserNotFoundException(username));
 
         //Updates the region and personal bio
         user.getBsProfile().setRegion(request.getRegion());
@@ -91,11 +91,11 @@ public class ProfileServiceImpl implements ProfileService {
      * @param username a String containing the username of the user obtained from the token
      * @return SuccessResponse "User's Brawl Star ID has been updated successfully"
      */
-    public Response updateBsPlayerTag(UpdateBsPlayerTagRequest request, String username) throws UsernameNotFoundException {
+    public Response updateBsPlayerTag(UpdateBsPlayerTagRequest request, String username) throws UserNotFoundException {
 
         //Finds user in repository else throws UsernameNotFoundException
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
+                .orElseThrow(() -> new UserNotFoundException(username));
 
         //Updates the region and personal bio
         user.getBsProfile().setPlayerTag(request.getPlayerTag());
@@ -114,10 +114,10 @@ public class ProfileServiceImpl implements ProfileService {
      * @return SuccessResponse "User has been deleted successfully"
      */
     @Override
-    public Response deleteUserProfile(String username) throws UsernameNotFoundException {
+    public Response deleteUserProfile(String username) throws UserNotFoundException {
         //Finds user in repository, else throws UsernameNotFoundException
         userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
+                .orElseThrow(() -> new UserNotFoundException(username));
 
         //Deletes user from repository
         userRepository.deleteByUsername(username);
