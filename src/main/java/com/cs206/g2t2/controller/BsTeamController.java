@@ -46,5 +46,20 @@ public class BsTeamController {
         //If successful, the response is encapsulated with HTTP code of 200(ok) and contains the User object
         return new ResponseEntity(response, HttpStatus.OK);
     }
+
+    @PutMapping("/team")
+    public ResponseEntity<Response> addMember(@RequestParam(name = "teamName") String teamName,
+                                              @RequestParam(name = "addUsername") String addUsername,
+                                              @AuthenticationPrincipal UserDetails userDetails) {
+
+        // Get the username from the userDetails of the authenticated user
+        String username = userDetails.getUsername();
+
+        //Create team using createTeam method in bsTeamService
+        Response response = bsTeamService.addMember(username, teamName, addUsername);
+
+        //If successful, the response is encapsulated with HTTP code of 200(ok) and contains the User object
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
 }
 
