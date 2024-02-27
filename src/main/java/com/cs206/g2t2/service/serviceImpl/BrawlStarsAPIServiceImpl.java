@@ -4,7 +4,7 @@ import com.cs206.g2t2.data.response.Response;
 import com.cs206.g2t2.data.response.brawlStars.BsPlayerResponse;
 import com.cs206.g2t2.data.response.common.SuccessResponse;
 import com.cs206.g2t2.exceptions.notFound.BsPlayerTagNotFoundException;
-import com.cs206.g2t2.exceptions.notFound.UserNotFoundException;
+import com.cs206.g2t2.exceptions.notFound.UsernameNotFoundException;
 import com.cs206.g2t2.models.User;
 import com.cs206.g2t2.models.brawlStarsAPI.playerInfo.Player;
 import com.cs206.g2t2.repository.UserRepository;
@@ -46,10 +46,10 @@ public class BrawlStarsAPIServiceImpl implements BrawlStarsAPIService {
      * @param username a String containing the username of the user obtained from the token
      * @return Player object containing user's player stats
      */
-    private String getPlayerTagFromUser(String username) throws UserNotFoundException, BsPlayerTagNotFoundException {
+    private String getPlayerTagFromUser(String username) throws UsernameNotFoundException, BsPlayerTagNotFoundException {
         //Obtain user from userRepository and throws UsernameNotFoundException if user not found
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(username));
+                .orElseThrow(() -> new UsernameNotFoundException(username));
 
         //Obtain playerTag of user from user
         String playerTag = user.getBsProfile().getPlayerTag();
@@ -119,7 +119,7 @@ public class BrawlStarsAPIServiceImpl implements BrawlStarsAPIService {
 
         //Obtain user from userRepository and throws UsernameNotFoundException if user not found
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(username));
+                .orElseThrow(() -> new UsernameNotFoundException(username));
 
         //Obtains user from BsProfile
         user.getBsProfile().setPlayer(player);

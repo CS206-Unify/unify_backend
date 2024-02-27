@@ -8,7 +8,7 @@ import com.cs206.g2t2.data.response.common.SuccessResponse;
 import com.cs206.g2t2.exceptions.badRequest.DuplicatedEmailException;
 import com.cs206.g2t2.exceptions.badRequest.DuplicatedUsernameException;
 import com.cs206.g2t2.exceptions.unauthorized.InvalidCredentialsException;
-import com.cs206.g2t2.exceptions.notFound.UserNotFoundException;
+import com.cs206.g2t2.exceptions.notFound.UsernameNotFoundException;
 import com.cs206.g2t2.models.BsProfile;
 import com.cs206.g2t2.models.User;
 import com.cs206.g2t2.repository.UserRepository;
@@ -89,7 +89,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         //Finds User object from database by username
         User retrievedUser = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new UserNotFoundException(request.getUsername()));
+                .orElseThrow(() -> new UsernameNotFoundException(request.getUsername()));
 
         //If authenticated, create jwt token and return an AuthenticationResponse containing jwt token
         String jwtToken = jwtService.generateToken(retrievedUser);
@@ -121,7 +121,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         //Finds User object from database by username
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new UserNotFoundException(request.getUsername()));
+                .orElseThrow(() -> new UsernameNotFoundException(request.getUsername()));
 
         //If authenticated, create jwt token and return an AuthenticationResponse containing jwt token
         String jwtToken = jwtService.generateToken(user);
