@@ -47,8 +47,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     /**
      * @param request RegisterRequest object containing the new user info to be created
-     * @return SuccessResponse containing information "User has been created successfully"
-     *      or throws the relevant exception from the getUserClassFromRequest method in commonService
+     * @return AuthenticationResponse with information on the jwt token to be returned to the user for
+     * authenticated api path access
      */
     public Response register(RegisterRequest request) {
 
@@ -71,9 +71,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         //Save user into the repository
         userRepository.save(user);
 
-        //If Everything goes smoothly, SuccessResponse will be created
-        return SuccessResponse.builder()
-                .message("User has been created successfully")
+        //Finds User object from database by username
+        User retrievedUser = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new UserNotFoundException(request.getUsername()));
+
+        //If authenticated, create jwt token and return an AuthenticationResponse containing jwt token
+        String jwtToken = jwtService.generateToken(retrievedUser);
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
                 .build();
     }
 

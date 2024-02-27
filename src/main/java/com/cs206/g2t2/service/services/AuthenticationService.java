@@ -15,7 +15,8 @@ public interface AuthenticationService {
      * If username can be found in the repository, throw a DuplicatedUsernameException.
      *
      * @param request a RegisterRequest object containing the new user info to be created
-     * @return SuccessResponse "User has been created successfully"
+     * @return AuthenticationResponse with information on the jwt token to be returned to the user for
+     * authenticated api path access
      */
     Response register(RegisterRequest request);
 
