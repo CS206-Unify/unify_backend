@@ -14,12 +14,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TeamUpdateRequest {
 
-    @NotBlank(message = "Team Name is required")
-    @Size(min = 8,
-            max = 30,
-            message = "Team Name must be between {min} and {max} characters long")
-    private String teamName;
-
     //imageString stores the S3 image link, can be null if there is no image
     private String imageString;
 
