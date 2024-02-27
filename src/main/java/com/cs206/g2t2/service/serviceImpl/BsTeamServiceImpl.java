@@ -5,6 +5,7 @@ import com.cs206.g2t2.data.request.team.TeamUpdateRequest;
 import com.cs206.g2t2.data.response.Response;
 import com.cs206.g2t2.data.response.common.SuccessResponse;
 import com.cs206.g2t2.exceptions.badRequest.DuplicatedTeamNameException;
+import com.cs206.g2t2.exceptions.badRequest.TeamIsFullException;
 import com.cs206.g2t2.exceptions.forbidden.ForbiddenException;
 import com.cs206.g2t2.exceptions.notFound.TeamNotFoundException;
 import com.cs206.g2t2.exceptions.notFound.UserNotFoundException;
@@ -58,7 +59,7 @@ public class BsTeamServiceImpl implements BsTeamService {
         return bsTeamRepository.findByTeamName(teamName).orElseThrow(() -> new TeamNotFoundException(teamName));
     }
 
-    private void isAdminUser(User user, BsTeam bsTeam) {
+    private void isAdminUser(User user, BsTeam bsTeam) throws ForbiddenException {
         //Finds current user from the bsTeam and check if the user is an admin
         boolean found = false;
         for (TeamMember teamMember : bsTeam.getMemberList()) {
@@ -129,6 +130,45 @@ public class BsTeamServiceImpl implements BsTeamService {
         //Return SuccessResponse
         return SuccessResponse.builder()
                 .message("Team has been updated successfully")
+                .build();
+    }
+
+    @Override
+    public Response addMember(String username, String teamName, String addUserName)
+            throws UserNotFoundException, TeamNotFoundException , TeamIsFullException {
+
+        //Find User from userRepository
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
+
+        //Find User from userRepository
+        User addUser = userRepository.findByUsername(addUserName).orElseThrow(() -> new UserNotFoundException(addUserName));
+
+        //Find Team from bsTeamRepository
+        BsTeam bsTeam = bsTeamRepository.findByTeamName(teamName)
+                .orElseThrow(() -> new TeamNotFoundException(teamName));
+
+        //Checks if current user is a admin user, else throws ForbiddenException
+        isAdminUser(user, bsTeam);
+
+        //Checks if current team is full alr
+        if (bsTeam.getMemberList().size() == bsTeam.getMaximumTeamSize()) {
+            throw new TeamIsFullException(bsTeam.getTeamName(), bsTeam.getMaximumTeamSize());
+        }
+
+        //Create TeamMember Object and add to the bsTeam
+        TeamMember teamMember = TeamMember.builder()
+                .userId(addUser.get_id())
+                .role(TeamMember.Role.MEMBER)
+                .joinDate(LocalDateTime.now())
+                .build();
+        bsTeam.getMemberList().add(teamMember);
+
+        //Save bsTeam into teamRepository
+        bsTeamRepository.save(bsTeam);
+
+        //Return SuccessResponse
+        return SuccessResponse.builder()
+                .message("Team Member " + addUserName + " has been added successfully")
                 .build();
     }
 }
