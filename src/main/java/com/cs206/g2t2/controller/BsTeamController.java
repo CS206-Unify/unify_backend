@@ -21,8 +21,17 @@ public class BsTeamController {
 
     private final BsTeamService bsTeamService;
 
+    @GetMapping("/team/{teamId}")
+    public ResponseEntity<Response> getBsTeamByTeamId(@PathVariable("teamId") String teamId) {
+        //Create team using createTeam method in bsTeamService
+        Response response = bsTeamService.getBsTeamByTeamId(teamId);
+
+        //If successful, the response is encapsulated with HTTP code of 201(created) and contains the BsTeam object
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
+
     @PostMapping("/team")
-    public ResponseEntity<Response> createTeam(@Valid @RequestBody TeamCreationRequest request,
+    public ResponseEntity<Response> createBsTeam(@Valid @RequestBody TeamCreationRequest request,
                                                @AuthenticationPrincipal UserDetails userDetails) {
         // Get the username from the userDetails of the authenticated user
         String username = userDetails.getUsername();
@@ -30,36 +39,52 @@ public class BsTeamController {
         //Create team using createTeam method in bsTeamService
         Response response = bsTeamService.createBsTeam(request, username);
 
-        //If successful, the response is encapsulated with HTTP code of 200(ok) and contains the User object
-        return new ResponseEntity(response, HttpStatus.OK);
+        //If successful, the response is encapsulated with HTTP code of 201(created) and contains the BsTeam object
+        return new ResponseEntity(response, HttpStatus.CREATED);
     }
 
-    @PutMapping("/team")
-    public ResponseEntity<Response> updateTeam(@Valid @RequestBody TeamUpdateRequest request,
-                                               @AuthenticationPrincipal UserDetails userDetails) {
+    @PutMapping("/team/{teamId}")
+    public ResponseEntity<Response> updateBsTeam(@Valid @RequestBody TeamUpdateRequest request,
+                                                 @PathVariable("teamId") String teamId,
+                                                 @AuthenticationPrincipal UserDetails userDetails) {
         // Get the username from the userDetails of the authenticated user
         String username = userDetails.getUsername();
 
         //Create team using createTeam method in bsTeamService
-        Response response = bsTeamService.updateBsTeam(request, username);
+        Response response = bsTeamService.updateBsTeam(request, teamId, username);
+
+        //If successful, the response is encapsulated with HTTP code of 200(ok) and contains the updated BsTeam object
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/team/{teamId}/member/{memberId}")
+    public ResponseEntity<Response> addMember(@PathVariable("teamId") String teamId,
+                                              @PathVariable("memberId") String memberId,
+                                              @AuthenticationPrincipal UserDetails userDetails) {
+
+        // Get the username from the userDetails of the authenticated user
+        String username = userDetails.getUsername();
+
+        //Create team using createTeam method in bsTeamService
+        Response response = bsTeamService.addMember(username, teamId, memberId);
 
         //If successful, the response is encapsulated with HTTP code of 200(ok) and contains the User object
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
-//    @PutMapping("/team")
-//    public ResponseEntity<Response> addMember(@RequestParam(name = "teamName") String teamName,
-//                                              @RequestParam(name = "addUsername") String addUsername,
-//                                              @AuthenticationPrincipal UserDetails userDetails) {
-//
-//        // Get the username from the userDetails of the authenticated user
-//        String username = userDetails.getUsername();
-//
-//        //Create team using createTeam method in bsTeamService
-//        Response response = bsTeamService.addMember(username, teamName, addUsername);
-//
-//        //If successful, the response is encapsulated with HTTP code of 200(ok) and contains the User object
-//        return new ResponseEntity(response, HttpStatus.OK);
-//    }
+    @PutMapping("/team/{teamId}/member/{memberId}")
+    public ResponseEntity<Response> promoteMember(@PathVariable("teamId") String teamId,
+                                                  @PathVariable("memberId") String memberId,
+                                                  @AuthenticationPrincipal UserDetails userDetails) {
+
+        // Get the username from the userDetails of the authenticated user
+        String username = userDetails.getUsername();
+
+        //Create team using createTeam method in bsTeamService
+        Response response = bsTeamService.promoteMember(username, teamId, memberId);
+
+        //If successful, the response is encapsulated with HTTP code of 200(ok) and contains the User object
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
 }
 
