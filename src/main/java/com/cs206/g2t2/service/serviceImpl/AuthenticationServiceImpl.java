@@ -5,6 +5,7 @@ import com.cs206.g2t2.data.request.auth.RegisterRequest;
 import com.cs206.g2t2.data.response.AuthenticationResponse;
 import com.cs206.g2t2.data.response.Response;
 import com.cs206.g2t2.data.response.common.SuccessResponse;
+import com.cs206.g2t2.exceptions.badRequest.DuplicatedEmailException;
 import com.cs206.g2t2.exceptions.badRequest.DuplicatedUsernameException;
 import com.cs206.g2t2.exceptions.unauthorized.InvalidCredentialsException;
 import com.cs206.g2t2.exceptions.notFound.UserNotFoundException;
@@ -46,6 +47,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     /**
+     * Private helper: Searches for users in the repository which has the same email.
+     * If user with email can be found in the repository, throw a DuplicatedEmailException.
+     *
+     * @param email String object containing the email
+     */
+    private void hasExistingUserWithEmail(String email) {
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new DuplicatedEmailException(email);
+        }
+    }
+
+    /**
      * @param request RegisterRequest object containing the new user info to be created
      * @return AuthenticationResponse with information on the jwt token to be returned to the user for
      * authenticated api path access
@@ -54,6 +67,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         //If username is present, throw new DuplicatedUsernameException
         hasExistingUserWithUsername(request.getUsername());
+
+        //If email is present, throw new DuplicatedEmailException
+        hasExistingUserWithEmail(request.getEmail());
 
         //Create User Object
         User user = User.builder()
