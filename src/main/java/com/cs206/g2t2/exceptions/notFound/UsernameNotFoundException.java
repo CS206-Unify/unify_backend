@@ -4,11 +4,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NOT_FOUND) // 404 Error
-public class TeamNotFoundException extends NotFoundException {
+public class UsernameNotFoundException extends NotFoundException {
 
     private static final long serialVersionUID = 1L;
 
-    public TeamNotFoundException(String teamId) {
-        super("Team with teamId " + teamId + " does not exist");
+    public UsernameNotFoundException(String username) {
+        super("User with username " + username + " does not exist");
     }
 }

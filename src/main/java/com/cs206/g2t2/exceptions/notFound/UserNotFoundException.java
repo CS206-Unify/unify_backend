@@ -8,7 +8,7 @@ public class UserNotFoundException extends NotFoundException {
 
     private static final long serialVersionUID = 1L;
 
-    public UserNotFoundException(String username) {
-        super("User with username " + username + " does not exist");
+    public UserNotFoundException(String userId) {
+        super("User with userId " + userId + " does not exist");
     }
 }
