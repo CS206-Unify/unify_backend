@@ -1,9 +1,11 @@
 package com.cs206.g2t2.service.serviceImpl;
 
 import com.cs206.g2t2.data.request.team.TeamCreationRequest;
+import com.cs206.g2t2.data.request.team.TeamUpdateRequest;
 import com.cs206.g2t2.data.response.Response;
 import com.cs206.g2t2.data.response.common.SuccessResponse;
 import com.cs206.g2t2.exceptions.badRequest.DuplicatedTeamNameException;
+import com.cs206.g2t2.exceptions.forbidden.ForbiddenException;
 import com.cs206.g2t2.exceptions.notFound.TeamNotFoundException;
 import com.cs206.g2t2.exceptions.notFound.UserNotFoundException;
 import com.cs206.g2t2.models.BsTeam;
@@ -56,6 +58,19 @@ public class BsTeamServiceImpl implements BsTeamService {
         return bsTeamRepository.findByTeamName(teamName).orElseThrow(() -> new TeamNotFoundException(teamName));
     }
 
+    private void isAdminUser(User user, BsTeam bsTeam) {
+        //Finds current user from the bsTeam and check if the user is an admin
+        boolean found = false;
+        for (TeamMember teamMember : bsTeam.getMemberList()) {
+            if (teamMember.getUserId().equals(user.get_id()) && teamMember.getRole() == TeamMember.Role.ADMIN) {
+                found = true;
+            }
+        }
+
+        //If the user is not an admin member of the team, throw new ForbiddenException
+        if (!found) { throw new ForbiddenException(); }
+    }
+
     @Override
     public Response createBsTeam(TeamCreationRequest request, String username) throws UserNotFoundException {
 
@@ -82,6 +97,38 @@ public class BsTeamServiceImpl implements BsTeamService {
 
         return SuccessResponse.builder()
                 .message("Team has been created successfully")
+                .build();
+    }
+
+    @Override
+    public Response updateBsTeam(TeamUpdateRequest request, String username)
+            throws UserNotFoundException, TeamNotFoundException, ForbiddenException {
+
+        //Find Team from userRepository
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
+
+        //Find Team from bsTeamRepository
+        BsTeam bsTeam = bsTeamRepository.findByTeamName(request.getTeamName())
+                .orElseThrow(() -> new TeamNotFoundException(request.getTeamName()));
+
+        //Checks if current user is a admin user, else throws ForbiddenException
+        isAdminUser(user, bsTeam);
+
+        //Perform update of all fields
+        bsTeam.setTrophyRequirements(request.getTrophyRequirements());
+        bsTeam.setMin3v3Wins(request.getMin3v3Wins());
+        bsTeam.setMinDuoWins(request.getMinDuoWins());
+        bsTeam.setMinSoloWins(request.getMinSoloWins());
+        if (request.getImageString() != null) {
+            bsTeam.setImageString(request.getImageString());
+        }
+
+        //Save bsTeam into teamRepository
+        bsTeamRepository.save(bsTeam);
+
+        //Return SuccessResponse
+        return SuccessResponse.builder()
+                .message("Team has been updated successfully")
                 .build();
     }
 }
