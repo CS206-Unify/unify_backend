@@ -1,22 +1,28 @@
 package com.cs206.g2t2.controller;
 
+import com.amazonaws.services.xray.model.Http;
 import com.cs206.g2t2.exceptions.badRequest.BadRequestException;
+import com.cs206.g2t2.exceptions.badRequest.DuplicatedEmailException;
+import com.cs206.g2t2.exceptions.badRequest.DuplicatedTeamNameException;
+import com.cs206.g2t2.exceptions.badRequest.DuplicatedUsernameException;
 import com.cs206.g2t2.exceptions.brawlStarsApi.ExternalAPIException;
 import com.cs206.g2t2.exceptions.forbidden.ForbiddenException;
-import com.cs206.g2t2.exceptions.notFound.NotFoundException;
+import com.cs206.g2t2.exceptions.notFound.*;
+import com.cs206.g2t2.exceptions.unauthorized.InvalidCredentialsException;
 import com.cs206.g2t2.exceptions.unauthorized.UnauthorizedException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
@@ -30,38 +36,42 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(BadRequestException.class)
-    protected ResponseEntity<Object> handleBadRequestException(BadRequestException badRequestException,
-                                                               HttpStatusCode status) {
-        Map<String, Object> body = returnMapFromException(badRequestException, status);
+    protected ResponseEntity<Object> handleBadRequestException(BadRequestException badRequestException) {
+        Map<String, Object> body = returnMapFromException(badRequestException, HttpStatus.BAD_REQUEST);
         return ResponseEntity
-                .status(status.value())
+                .status(HttpStatus.BAD_REQUEST)
                 .body(body);
     }
 
     @ExceptionHandler(UnauthorizedException.class)
-    protected ResponseEntity<Object> handleUnauthorizedException(UnauthorizedException unauthorizedException,
-                                                                 HttpStatusCode status) {
-        Map<String, Object> body = returnMapFromException(unauthorizedException, status);
+    protected ResponseEntity<Object> handleUnauthorizedExceptions(UnauthorizedException unauthorizedException) {
+        Map<String, Object> body = returnMapFromException(unauthorizedException, HttpStatus.UNAUTHORIZED);
         return ResponseEntity
-                .status(status.value())
+                .status(HttpStatus.UNAUTHORIZED)
                 .body(body);
     }
 
     @ExceptionHandler(ForbiddenException.class)
-    protected ResponseEntity<Object> handleUnauthorizedException(ForbiddenException forbiddenException,
-                                                                 HttpStatusCode status) {
-        Map<String, Object> body = returnMapFromException(forbiddenException, status);
+    protected ResponseEntity<Object> handleForbiddenException(ForbiddenException forbiddenException) {
+        Map<String, Object> body = returnMapFromException(forbiddenException, HttpStatus.FORBIDDEN);
         return ResponseEntity
-                .status(status.value())
+                .status(HttpStatus.FORBIDDEN)
                 .body(body);
     }
 
     @ExceptionHandler(NotFoundException.class)
-    protected ResponseEntity<Object> handleNotFoundException(NotFoundException notFoundException,
-                                                              HttpStatusCode status) {
-        Map<String, Object> body = returnMapFromException(notFoundException, status);
+    protected ResponseEntity<Object> handleNotFoundException(NotFoundException notFoundException) {
+        Map<String, Object> body = returnMapFromException(notFoundException, HttpStatus.NOT_FOUND);
         return ResponseEntity
-                .status(status.value())
+                .status(HttpStatus.NOT_FOUND)
+                .body(body);
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    protected ResponseEntity<Object> handleIllegalStateException(IllegalStateException illegalStateException) {
+        Map<String, Object> body = returnMapFromException(illegalStateException, HttpStatus.INTERNAL_SERVER_ERROR);
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(body);
     }
 
@@ -75,13 +85,22 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object>
-    handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-                                 HttpHeaders headers,
-                                 HttpStatusCode status,
-                                 WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatusCode status,
+                                                                  WebRequest request) {
+        //Find all the errors in the name and put into a list
+        List<String> errors = new ArrayList<String>();
+        List<ObjectError> objectErrorList = ex.getBindingResult().getAllErrors();
+        for (ObjectError error : objectErrorList) {
+            errors.add(error.getDefaultMessage());
+        }
 
-        Map<String, Object> body = returnMapFromException(ex, status);
+        //Create body of ResponseEntity
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("status", status.value());
+        body.put("error", ex.getClass());
+        body.put("message", errors.toString());
         return ResponseEntity
                 .status(status.value())
                 .body(body);
