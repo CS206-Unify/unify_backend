@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 public class TeamMember {
     public enum Role {
+        OWNER,
         ADMIN,
         MEMBER,
     }
