@@ -3,12 +3,12 @@ package com.cs206.g2t2.service.serviceImpl;
 import com.cs206.g2t2.data.request.team.TeamCreationRequest;
 import com.cs206.g2t2.data.request.team.TeamUpdateRequest;
 import com.cs206.g2t2.data.response.Response;
+import com.cs206.g2t2.data.response.bsTeam.SingleBsTeamResponse;
 import com.cs206.g2t2.data.response.common.SuccessResponse;
 import com.cs206.g2t2.exceptions.badRequest.DuplicatedTeamNameException;
 import com.cs206.g2t2.exceptions.badRequest.TeamIsFullException;
 import com.cs206.g2t2.exceptions.forbidden.ForbiddenException;
-import com.cs206.g2t2.exceptions.notFound.TeamNotFoundException;
-import com.cs206.g2t2.exceptions.notFound.UserNotFoundException;
+import com.cs206.g2t2.exceptions.notFound.*;
 import com.cs206.g2t2.models.BsTeam;
 import com.cs206.g2t2.models.TeamMember;
 import com.cs206.g2t2.models.User;
@@ -29,7 +29,7 @@ public class BsTeamServiceImpl implements BsTeamService {
     private final BsTeamRepository bsTeamRepository;
 
     private BsTeam saveAndReturnBsTeamInRepository(TeamCreationRequest request)
-            throws DuplicatedTeamNameException, TeamNotFoundException{
+            throws DuplicatedTeamNameException, TeamNameNotFoundException {
 
         //Stores username in a variable
         String teamName = request.getTeamName();
@@ -56,14 +56,15 @@ public class BsTeamServiceImpl implements BsTeamService {
         bsTeamRepository.save(bsTeam);
 
         //Returns bsTeam stored in repository to caller
-        return bsTeamRepository.findByTeamName(teamName).orElseThrow(() -> new TeamNotFoundException(teamName));
+        return bsTeamRepository.findByTeamName(teamName).orElseThrow(() -> new TeamNameNotFoundException(teamName));
     }
 
-    private void isAdminUser(User user, BsTeam bsTeam) throws ForbiddenException {
-        //Finds current user from the bsTeam and check if the user is an admin
+    private void isOwnerOrAdminUser(User user, BsTeam bsTeam) throws ForbiddenException {
+        //Finds current user from the bsTeam and check if the user is an Admin/Owner
         boolean found = false;
         for (TeamMember teamMember : bsTeam.getMemberList()) {
-            if (teamMember.getUserId().equals(user.get_id()) && teamMember.getRole() == TeamMember.Role.ADMIN) {
+            if (teamMember.getUserId().equals(user.get_id()) &&
+               (teamMember.getRole() == TeamMember.Role.ADMIN || teamMember.getRole() == TeamMember.Role.OWNER)) {
                 found = true;
             }
         }
@@ -73,13 +74,25 @@ public class BsTeamServiceImpl implements BsTeamService {
     }
 
     @Override
-    public Response createBsTeam(TeamCreationRequest request, String username) throws UserNotFoundException {
+    public Response getBsTeamByTeamId(String teamId) {
+
+        //Finds BsTeam in bsTeamRepository by teamId
+        BsTeam bsTeam = bsTeamRepository.findBy_id(teamId).orElseThrow(() -> new TeamNotFoundException(teamId));
+
+        //Return SingleBsTeamResponse
+        return SingleBsTeamResponse.builder()
+                .bsTeam(bsTeam)
+                .build();
+    }
+
+    @Override
+    public Response createBsTeam(TeamCreationRequest request, String username) throws UsernameNotFoundException {
 
         //Find user from userRepository
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
         TeamMember teamMember = TeamMember.builder()
                 .userId(user.get_id())
-                .role(TeamMember.Role.ADMIN)
+                .role(TeamMember.Role.OWNER)
                 .joinDate(LocalDateTime.now())
                 .build();
 
@@ -96,24 +109,25 @@ public class BsTeamServiceImpl implements BsTeamService {
         userRepository.save(user);
         bsTeamRepository.save(bsTeam);
 
-        return SuccessResponse.builder()
-                .message("Team has been created successfully")
+        //Return SingleBsTeamResponse
+        return SingleBsTeamResponse.builder()
+                .bsTeam(bsTeam)
                 .build();
     }
 
     @Override
-    public Response updateBsTeam(TeamUpdateRequest request, String username)
-            throws UserNotFoundException, TeamNotFoundException, ForbiddenException {
+    public Response updateBsTeam(TeamUpdateRequest request, String teamId, String username)
+            throws UsernameNotFoundException, TeamNameNotFoundException, ForbiddenException {
 
         //Find Team from userRepository
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
 
         //Find Team from bsTeamRepository
-        BsTeam bsTeam = bsTeamRepository.findByTeamName(request.getTeamName())
-                .orElseThrow(() -> new TeamNotFoundException(request.getTeamName()));
+        BsTeam bsTeam = bsTeamRepository.findBy_id(teamId)
+                .orElseThrow(() -> new TeamNotFoundException(teamId));
 
-        //Checks if current user is a admin user, else throws ForbiddenException
-        isAdminUser(user, bsTeam);
+        //Checks if current user is an admin user or owner, else throws ForbiddenException
+        isOwnerOrAdminUser(user, bsTeam);
 
         //Perform update of all fields
         bsTeam.setTrophyRequirements(request.getTrophyRequirements());
@@ -127,48 +141,95 @@ public class BsTeamServiceImpl implements BsTeamService {
         //Save bsTeam into teamRepository
         bsTeamRepository.save(bsTeam);
 
-        //Return SuccessResponse
-        return SuccessResponse.builder()
-                .message("Team has been updated successfully")
+        //Return SingleBsTeamResponse
+        return SingleBsTeamResponse.builder()
+                .bsTeam(bsTeam)
                 .build();
     }
 
     @Override
-    public Response addMember(String username, String teamName, String addUserName)
-            throws UserNotFoundException, TeamNotFoundException , TeamIsFullException {
+    public Response addMember(String username, String teamId, String memberId)
+            throws UsernameNotFoundException, UserNotFoundException, TeamNameNotFoundException, TeamIsFullException {
 
         //Find User from userRepository
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
 
         //Find User from userRepository
-        User addUser = userRepository.findByUsername(addUserName).orElseThrow(() -> new UserNotFoundException(addUserName));
+        User member = userRepository.findBy_id(memberId)
+                .orElseThrow(() -> new UserNotFoundException(memberId));
 
         //Find Team from bsTeamRepository
-        BsTeam bsTeam = bsTeamRepository.findByTeamName(teamName)
-                .orElseThrow(() -> new TeamNotFoundException(teamName));
+        BsTeam bsTeam = bsTeamRepository.findBy_id(teamId)
+                .orElseThrow(() -> new TeamNotFoundException(teamId));
 
-        //Checks if current user is a admin user, else throws ForbiddenException
-        isAdminUser(user, bsTeam);
+        //Checks if current user is an admin user or owner, else throws ForbiddenException
+        isOwnerOrAdminUser(user, bsTeam);
 
-        //Checks if current team is full alr
+        //Checks if current team is full already, if so throw TeamIsFullException
         if (bsTeam.getMemberList().size() == bsTeam.getMaximumTeamSize()) {
             throw new TeamIsFullException(bsTeam.getTeamName(), bsTeam.getMaximumTeamSize());
         }
 
-        //Create TeamMember Object and add to the bsTeam
+        //Create TeamMember Object and add to the bsTeam as a member
         TeamMember teamMember = TeamMember.builder()
-                .userId(addUser.get_id())
+                .userId(member.get_id())
                 .role(TeamMember.Role.MEMBER)
                 .joinDate(LocalDateTime.now())
                 .build();
         bsTeam.getMemberList().add(teamMember);
+
+        //Add Team to members TeamList
+        member.getTeams().add(teamId);
+
+        //Save member and bsTeam into userRepository and teamRepository respectively
+        bsTeamRepository.save(bsTeam);
+        userRepository.save(member);
+
+        //Return SuccessResponse
+        return SuccessResponse.builder()
+                .message("Team Member " + member.getUsername() + " has been added successfully into " + bsTeam.getTeamName())
+                .build();
+    }
+
+    @Override
+    public Response promoteMember(String username, String teamId, String memberId)
+            throws UsernameNotFoundException, UserNotFoundException, TeamNameNotFoundException, MemberNotFoundException {
+
+        //Find User from userRepository
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        //Find User from userRepository
+        User member = userRepository.findBy_id(memberId)
+                .orElseThrow(() -> new UserNotFoundException(memberId));
+
+        //Find Team from bsTeamRepository
+        BsTeam bsTeam = bsTeamRepository.findBy_id(teamId)
+                .orElseThrow(() -> new TeamNotFoundException(teamId));
+
+        //Checks if current user is an admin user or owner, else throws ForbiddenException
+        isOwnerOrAdminUser(user, bsTeam);
+
+        //Iterates through the memberList of the bsTeam and find whether member exists in the memberList
+        boolean found = false;
+        for (TeamMember teamMember : bsTeam.getMemberList()) {
+            if (teamMember.getUserId().equals(member.get_id())) {
+                //If teamMember found, promote member and change found to true
+                found = true;
+                teamMember.setRole(TeamMember.Role.ADMIN);
+            }
+        }
+
+        //If member cannot be found, throw new MemberNotFoundException
+        if (!found) { throw new MemberNotFoundException(member.getUsername(), bsTeam.getTeamName()); }
 
         //Save bsTeam into teamRepository
         bsTeamRepository.save(bsTeam);
 
         //Return SuccessResponse
         return SuccessResponse.builder()
-                .message("Team Member " + addUserName + " has been added successfully")
+                .message("Team Member " + member.getUsername() + " has been promoted successfully")
                 .build();
     }
 }
