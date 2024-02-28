@@ -9,6 +9,8 @@ import com.cs206.g2t2.models.User;
 import com.cs206.g2t2.models.brawlStarsAPI.playerInfo.Player;
 import com.cs206.g2t2.repository.UserRepository;
 import com.cs206.g2t2.service.services.BrawlStarsAPIService;
+import com.google.gson.Gson;
+import io.swagger.v3.oas.models.links.Link;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.util.LinkedHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +31,6 @@ public class BrawlStarsAPIServiceImpl implements BrawlStarsAPIService {
     private static final String brawlStarsInstanceUrl = "https://api.brawlstars.com/v1";
 
     private static final String playerInfoPath = "/players/%23";
-    private static final String battleLogUrl = "/battlelog";
 
     @Value("${unify.backend.app.brawlStarsKey}")
     private String apiKey;
@@ -37,6 +39,7 @@ public class BrawlStarsAPIServiceImpl implements BrawlStarsAPIService {
     private RestTemplate restTemplate;
 
     private final UserRepository userRepository;
+    private final Gson gson;
 
     /**
      * Private Helper: Perform API call to obtain Brawl Star Player Stats
@@ -82,15 +85,18 @@ public class BrawlStarsAPIServiceImpl implements BrawlStarsAPIService {
         URI uri = URI.create(url);
 
         //Make a GET call to the API
-        ResponseEntity<Player> responseEntity = restTemplate.exchange(
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
                 uri,
                 HttpMethod.GET,
                 entity,
-                Player.class
+                String.class
         );
 
+        //Converts the String into gson using serialized annotation
+        Player player = gson.fromJson(responseEntity.getBody(), Player.class);
+
         //Returns Player in ResponseEntity
-        return responseEntity.getBody();
+        return player;
     }
 
     /**
