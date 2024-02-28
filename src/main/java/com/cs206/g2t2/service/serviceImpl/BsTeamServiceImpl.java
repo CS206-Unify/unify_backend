@@ -6,6 +6,7 @@ import com.cs206.g2t2.data.response.Response;
 import com.cs206.g2t2.data.response.bsTeam.SingleBsTeamResponse;
 import com.cs206.g2t2.data.response.common.SuccessResponse;
 import com.cs206.g2t2.exceptions.badRequest.DuplicatedTeamNameException;
+import com.cs206.g2t2.exceptions.badRequest.RoleChangeNotAllowedException;
 import com.cs206.g2t2.exceptions.badRequest.TeamIsFullException;
 import com.cs206.g2t2.exceptions.forbidden.ForbiddenException;
 import com.cs206.g2t2.exceptions.notFound.*;
@@ -155,7 +156,7 @@ public class BsTeamServiceImpl implements BsTeamService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        //Find User from userRepository
+        //Find Member from userRepository
         User member = userRepository.findBy_id(memberId)
                 .orElseThrow(() -> new UserNotFoundException(memberId));
 
@@ -192,15 +193,80 @@ public class BsTeamServiceImpl implements BsTeamService {
                 .build();
     }
 
+    private void performPromotionOrDemotion(User user, User member, BsTeam bsTeam, boolean promotion)
+            throws MemberNotFoundException, RoleChangeNotAllowedException{
+        //Find both Team Members of the bsTeam
+        TeamMember foundUser = null;
+        TeamMember foundMember = null;
+        for (TeamMember teamMember : bsTeam.getMemberList()) {
+            if (teamMember.getUserId().equals(user.get_id())) {
+                foundUser = teamMember;
+            } else if (teamMember.getUserId().equals(member.get_id())) {
+                foundMember = teamMember;
+            }
+        }
+
+        //Checks if both found user and found member has been found of not throw MemberNotFoundException
+        if (foundUser == null || foundMember == null) {
+            throw new MemberNotFoundException((foundUser == null ? user.get_id() : member.getUsername()), bsTeam.getTeamName());
+        }
+
+        //Obtain user role and member role for easier access
+        TeamMember.Role userRole = foundUser.getRole();
+        TeamMember.Role memberRole = foundMember.getRole();
+
+        // If action required is promotion and member has role MEMBER
+        if (promotion && memberRole == TeamMember.Role.MEMBER) {
+            //Action is only allowed is user has Role ADMIN or Role OWNER
+            if (userRole == TeamMember.Role.OWNER || userRole == TeamMember.Role.ADMIN ) {
+                //Promote member to role ADMIN
+                foundMember.setRole(TeamMember.Role.ADMIN);
+            } else {
+                throw new ForbiddenException();
+            }
+
+        // If action required is promotion and member has role MEMBER
+        } else if (promotion && memberRole == TeamMember.Role.ADMIN){
+            //Action is only allowed is user has Role OWNER
+            if (userRole == TeamMember.Role.OWNER) {
+                //Transfer Ownership from user to member
+                foundUser.setRole(TeamMember.Role.ADMIN);
+                foundMember.setRole(TeamMember.Role.OWNER);
+            } else {
+                throw new ForbiddenException();
+            }
+
+        // If action required is demotion and member has role ADMIN
+        } else if (!promotion && memberRole == TeamMember.Role.ADMIN) {
+            //Action is only allowed is user has Role OWNER
+            if (userRole == TeamMember.Role.OWNER) {
+                //Demote member to role MEMBER
+                foundMember.setRole(TeamMember.Role.MEMBER);
+            } else {
+                throw new ForbiddenException();
+            }
+
+        // If requirements not met, throw RoleChangeNotAllowedException
+        } else {
+            throw new RoleChangeNotAllowedException(
+                    promotion ? RoleChangeNotAllowedException.PROMOTION : RoleChangeNotAllowedException.DEMOTION,
+                    userRole.toString(),
+                    memberRole.toString());
+        }
+
+        //Save to repository
+        bsTeamRepository.save(bsTeam);
+    }
+
     @Override
     public Response promoteMember(String username, String teamId, String memberId)
-            throws UsernameNotFoundException, UserNotFoundException, TeamNameNotFoundException, MemberNotFoundException {
+            throws UsernameNotFoundException, UserNotFoundException, TeamNameNotFoundException {
 
         //Find User from userRepository
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        //Find User from userRepository
+        //Find Member from userRepository
         User member = userRepository.findBy_id(memberId)
                 .orElseThrow(() -> new UserNotFoundException(memberId));
 
@@ -208,28 +274,37 @@ public class BsTeamServiceImpl implements BsTeamService {
         BsTeam bsTeam = bsTeamRepository.findBy_id(teamId)
                 .orElseThrow(() -> new TeamNotFoundException(teamId));
 
-        //Checks if current user is an admin user or owner, else throws ForbiddenException
-        isOwnerOrAdminUser(user, bsTeam);
-
-        //Iterates through the memberList of the bsTeam and find whether member exists in the memberList
-        boolean found = false;
-        for (TeamMember teamMember : bsTeam.getMemberList()) {
-            if (teamMember.getUserId().equals(member.get_id())) {
-                //If teamMember found, promote member and change found to true
-                found = true;
-                teamMember.setRole(TeamMember.Role.ADMIN);
-            }
-        }
-
-        //If member cannot be found, throw new MemberNotFoundException
-        if (!found) { throw new MemberNotFoundException(member.getUsername(), bsTeam.getTeamName()); }
-
-        //Save bsTeam into teamRepository
-        bsTeamRepository.save(bsTeam);
+        //Perform Promotion
+        performPromotionOrDemotion(user, member, bsTeam, true);
 
         //Return SuccessResponse
         return SuccessResponse.builder()
                 .message("Team Member " + member.getUsername() + " has been promoted successfully")
+                .build();
+    }
+
+    @Override
+    public Response demoteMember(String username, String teamId, String memberId)
+            throws UsernameNotFoundException, UserNotFoundException, TeamNameNotFoundException {
+
+        //Find User from userRepository
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        //Find Member from userRepository
+        User member = userRepository.findBy_id(memberId)
+                .orElseThrow(() -> new UserNotFoundException(memberId));
+
+        //Find Team from bsTeamRepository
+        BsTeam bsTeam = bsTeamRepository.findBy_id(teamId)
+                .orElseThrow(() -> new TeamNotFoundException(teamId));
+
+        //Perform Promotion
+        performPromotionOrDemotion(user, member, bsTeam, false);
+
+        //Return SuccessResponse
+        return SuccessResponse.builder()
+                .message("Team Member " + member.getUsername() + " has been demoted successfully")
                 .build();
     }
 }
