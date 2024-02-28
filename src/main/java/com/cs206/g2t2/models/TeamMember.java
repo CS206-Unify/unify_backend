@@ -13,9 +13,25 @@ import java.time.LocalDateTime;
 @Builder
 public class TeamMember {
     public enum Role {
-        OWNER,
-        ADMIN,
-        MEMBER,
+        OWNER("Owner", 2),
+        ADMIN("Admin", 1),
+        MEMBER("Member", 0);
+
+        public final String label;
+        public final int value;
+
+        Role(String label, int value) {
+            this.label = label;
+            this.value = value;
+        }
+
+        public boolean isHigherRole(Role role) {
+            return this.value > role.value;
+        }
+
+        public boolean isEqualRole(Role role) {
+            return this.value == role.value;
+        }
     }
 
     private String userId;
