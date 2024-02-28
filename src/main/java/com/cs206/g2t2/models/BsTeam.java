@@ -27,6 +27,9 @@ public class BsTeam {
     // teamName stores the team's name
     private String teamName;
 
+    // language stores the team's used language
+    private String language;
+
     // region stores the team's competing region
     private String region;
 

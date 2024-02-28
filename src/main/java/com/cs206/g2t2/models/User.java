@@ -50,7 +50,6 @@ public class User implements UserDetails { // Implements UserDetails so that the
     //teams stores the list of teamId that the user is within
     private List<String> teams;
 
-
     // Methods to extend UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -25,6 +25,10 @@ public class TeamCreationRequest {
     @NotBlank(message = "Region is required")
     private String region;
 
+    // language stores the competing language of the team
+    @NotBlank(message = "Language is required")
+    private String language;
+
     // maximumTeamSize stores the maximum capacity of the team
     @Min(value = 3, message = "Maximum Team Size must be more than or equal to {value}")
     private int maximumTeamSize;

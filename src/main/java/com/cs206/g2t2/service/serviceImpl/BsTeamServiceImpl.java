@@ -44,6 +44,7 @@ public class BsTeamServiceImpl implements BsTeamService {
         BsTeam bsTeam = BsTeam.builder()
                 .teamName(request.getTeamName())
                 .region(request.getRegion())
+                .language(request.getLanguage())
                 .maximumTeamSize(request.getMaximumTeamSize())
                 .imageString(null)
                 .trophyRequirements(0)
