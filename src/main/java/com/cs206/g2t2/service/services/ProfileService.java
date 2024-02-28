@@ -4,6 +4,7 @@ import com.cs206.g2t2.data.request.auth.UpdateProfileRequest;
 import com.cs206.g2t2.data.request.profile.UpdateBsPlayerTagRequest;
 import com.cs206.g2t2.data.request.profile.UpdateGameProfileRequest;
 import com.cs206.g2t2.data.response.Response;
+import com.cs206.g2t2.exceptions.notFound.UserNotFoundException;
 import com.cs206.g2t2.exceptions.notFound.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,16 @@ public interface ProfileService {
      * @param username a String object containing the username to be searched
      * @return SingleUserResponse object containing the user
      */
-    Response getUserProfile(String username) throws UsernameNotFoundException;
+    Response getUserProfileByUsername(String username) throws UsernameNotFoundException;
+
+    /**
+     * Finds a user with the inputted userId
+     * If userId cannot be found in the repository, throw a UserNotFoundException.
+     *
+     * @param userId a String object containing the userId to be searched
+     * @return SingleUserResponse object containing the user
+     */
+    Response getUserProfileByUserId(String userId) throws UserNotFoundException;
 
     /**
      * Updates a user's profile in the repository.

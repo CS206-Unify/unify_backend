@@ -32,17 +32,26 @@ public class ProfileController {
 
         //Find Profile based on the username by findProfile method in profileService
         //Throws a InvalidTokenException if username cannot be found in repository
-        Response response = profileService.getUserProfile(username);
+        Response response = profileService.getUserProfileByUsername(username);
 
         //If successful, the response is encapsulated with HTTP code of 200(ok) and contains the User object
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
-    @GetMapping("/profile/{username}")
+    @GetMapping("/profile/username/{username}")
     public ResponseEntity<Response> findUserProfileByUsername(@PathVariable String username) {
         // Find a profile based on the username provided
         // Throws a InvalidUsername if username cannot be found in repository
-        Response response = profileService.getUserProfile(username);
+        Response response = profileService.getUserProfileByUsername(username);
+
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/profile/userId/{userId}")
+    public ResponseEntity<Response> findUserProfileByUserId(@PathVariable String userId) {
+        // Find a profile based on the username provided
+        // Throws a InvalidUsername if username cannot be found in repository
+        Response response = profileService.getUserProfileByUserId(userId);
 
         return new ResponseEntity(response, HttpStatus.OK);
     }

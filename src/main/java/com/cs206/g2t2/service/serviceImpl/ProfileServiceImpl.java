@@ -8,6 +8,7 @@ import com.cs206.g2t2.data.response.common.SuccessResponse;
 import com.cs206.g2t2.data.response.user.SingleUserResponse;
 import com.cs206.g2t2.exceptions.notFound.MemberNotFoundException;
 import com.cs206.g2t2.exceptions.notFound.TeamNotFoundException;
+import com.cs206.g2t2.exceptions.notFound.UserNotFoundException;
 import com.cs206.g2t2.exceptions.notFound.UsernameNotFoundException;
 import com.cs206.g2t2.models.BsTeam;
 import com.cs206.g2t2.models.TeamMember;
@@ -33,10 +34,26 @@ public class ProfileServiceImpl implements ProfileService {
      * @return SingleUserResponse object containing the user
      */
     @Override
-    public Response getUserProfile(String username) throws UsernameNotFoundException {
+    public Response getUserProfileByUsername(String username) throws UsernameNotFoundException {
         //Finds user in repository else throws UsernameNotFoundException
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        //Returns SingleUserResponse if user can be found
+        return SingleUserResponse.builder()
+                .user(user)
+                .build();
+    }
+
+    /**
+     * @param userId a String object containing the userId to be searched
+     * @return SingleUserResponse object containing the user
+     */
+    @Override
+    public Response getUserProfileByUserId(String userId) throws UserNotFoundException {
+        //Finds user in repository else throws UsernameNotFoundException
+        User user = userRepository.findBy_id(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         //Returns SingleUserResponse if user can be found
         return SingleUserResponse.builder()
