@@ -32,7 +32,8 @@ public class DiscoverController {
         String username = userDetails.getUsername();
 
         //Create team using createTeam method in bsTeamService
-        Response response = discoverService.discoverTeam(username,region, language, trophies, threeVThreeWins, twoVTwoWins, soloWins, pageSize, pageNumber);
+        Response response = discoverService.discoverTeam(username,region, language, trophies, threeVThreeWins,
+                                                         twoVTwoWins, soloWins, pageSize, pageNumber);
 
         //If successful, the response is encapsulated with HTTP code of 201(created) and contains the BsTeam object
         return new ResponseEntity(response, HttpStatus.OK);
@@ -52,10 +53,11 @@ public class DiscoverController {
         String username = userDetails.getUsername();
 
         //Create team using createTeam method in bsTeamService
-        Response response = discoverService.discoverProfile(username, region, language, trophies, threeVThreeWins, twoVTwoWins, soloWins, pageSize, pageNumber);
+        Response response = discoverService.discoverProfile(username, region, language, trophies, threeVThreeWins,
+                                                            twoVTwoWins, soloWins, pageSize, pageNumber);
 
         //If successful, the response is encapsulated with HTTP code of 201(created) and contains the BsTeam object
-        return new ResponseEntity(response, HttpStatus.CREATED);
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 }
 
