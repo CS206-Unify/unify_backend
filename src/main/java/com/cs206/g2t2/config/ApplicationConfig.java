@@ -1,6 +1,7 @@
 package com.cs206.g2t2.config;
 
 import com.cs206.g2t2.repository.UserRepository;
+import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,5 +41,10 @@ public class ApplicationConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public Gson gson() {
+        return new Gson();
     }
 }
