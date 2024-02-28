@@ -9,6 +9,6 @@ public class ForbiddenException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     public ForbiddenException() {
-        super("User is not permitted to perform the following action.");
+        super("User is not permitted to perform the following action");
     }
 }
