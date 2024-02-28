@@ -72,7 +72,7 @@ public class BsTeamController {
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
-    @PutMapping("/team/{teamId}/member/{memberId}")
+    @PutMapping("/team/{teamId}/member/{memberId}/promote")
     public ResponseEntity<Response> promoteMember(@PathVariable("teamId") String teamId,
                                                   @PathVariable("memberId") String memberId,
                                                   @AuthenticationPrincipal UserDetails userDetails) {
@@ -82,6 +82,21 @@ public class BsTeamController {
 
         //Create team using createTeam method in bsTeamService
         Response response = bsTeamService.promoteMember(username, teamId, memberId);
+
+        //If successful, the response is encapsulated with HTTP code of 200(ok) and contains the User object
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/team/{teamId}/member/{memberId}/demote")
+    public ResponseEntity<Response> demoteMember(@PathVariable("teamId") String teamId,
+                                                 @PathVariable("memberId") String memberId,
+                                                 @AuthenticationPrincipal UserDetails userDetails) {
+
+        // Get the username from the userDetails of the authenticated user
+        String username = userDetails.getUsername();
+
+        //Create team using createTeam method in bsTeamService
+        Response response = bsTeamService.demoteMember(username, teamId, memberId);
 
         //If successful, the response is encapsulated with HTTP code of 200(ok) and contains the User object
         return new ResponseEntity(response, HttpStatus.OK);
