@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Builder
-public class Brawler {
+public class Brawler implements Comparable<Brawler>{
 
     @SerializedName("id")
     private long id;
@@ -40,4 +40,14 @@ public class Brawler {
 
     @SerializedName("gadgets")
     private List<Gadget> gadgets;
+
+
+    @Override
+    public int compareTo(Brawler o) {
+        int diff = this.rank - o.getRank();
+        if (diff != 0) { return diff; }
+        diff = this.trophies - o.getTrophies();
+        if (diff != 0) { return diff; }
+        return this.highestTrophies - o.getHighestTrophies();
+    }
 }

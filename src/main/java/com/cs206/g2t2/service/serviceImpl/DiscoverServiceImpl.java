@@ -2,7 +2,10 @@ package com.cs206.g2t2.service.serviceImpl;
 
 import com.cs206.g2t2.data.response.Response;
 import com.cs206.g2t2.data.response.bsTeam.MultiBsTeamResponse;
+import com.cs206.g2t2.data.response.user.MultiBsProfileListingResponse;
 import com.cs206.g2t2.data.response.user.MultiUserResponse;
+import com.cs206.g2t2.models.BsProfile;
+import com.cs206.g2t2.models.BsProfileListing;
 import com.cs206.g2t2.models.BsTeam;
 import com.cs206.g2t2.models.User;
 import com.cs206.g2t2.service.services.DiscoverService;
@@ -15,6 +18,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -119,9 +123,15 @@ public class DiscoverServiceImpl implements DiscoverService {
         //Generate list of outputs
         List<User> userList = mongoTemplate.find(query, User.class);
 
+        //Convert output into List<BsProfileListing>
+        List<BsProfileListing> bsProfileListingList = new ArrayList<>();
+        for (User user : userList) {
+            bsProfileListingList.add(new BsProfileListing(user));
+        }
+
         //Generate Response
-        return MultiUserResponse.builder()
-                .users(userList)
+        return MultiBsProfileListingResponse.builder()
+                .bsProfileListingList(bsProfileListingList)
                 .build();
     }
 }
