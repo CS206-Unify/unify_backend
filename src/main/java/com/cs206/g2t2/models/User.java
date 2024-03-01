@@ -50,6 +50,15 @@ public class User implements UserDetails { // Implements UserDetails so that the
     //teams stores the list of teamId that the user is within
     private List<String> teams;
 
+    //wins stores the number of wins in the past 100 battles
+    private int wins;
+
+    //losses stores the number of losses in the past 100 battles
+    private int losses;
+
+    //draws stores the number of draws in the past 100 battles
+    private int draws;
+
     // Methods to extend UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
