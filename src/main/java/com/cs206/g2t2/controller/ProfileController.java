@@ -68,6 +68,19 @@ public class ProfileController {
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
+    @GetMapping("/bsBattleLogs")
+    public ResponseEntity<Response> displayBsBattleLogs(@AuthenticationPrincipal UserDetails userDetails) {
+        // Get the username from the userDetails of the authenticated user
+        String username = userDetails.getUsername();
+
+        //Obtain Battle Log from username
+        //Throws a UsernameNotFoundException if username cannot be found in repository
+        Response response = brawlStarsAPIService.getBsBattleLog(username);
+
+        //Return a ResponseEntity to the caller
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
+
     @PutMapping("/profile")
     public ResponseEntity<Response> updateProfile(@Valid @RequestBody UpdateProfileRequest request,
                                                   @AuthenticationPrincipal UserDetails userDetails) {
@@ -106,6 +119,18 @@ public class ProfileController {
         //Update Profile using updateProfile method in profileService
         //Throws a UsernameNotFoundException if username cannot be found in repository
         Response response = brawlStarsAPIService.updateBsStats(username);
+
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/bsBattleLogs")
+    public ResponseEntity<Response> updateBsBattleLog(@AuthenticationPrincipal UserDetails userDetails) {
+        // Get the username from the userDetails of the authenticated user
+        String username = userDetails.getUsername();
+
+        //Update Profile using updateProfile method in profileService
+        //Throws a UsernameNotFoundException if username cannot be found in repository
+        Response response = brawlStarsAPIService.updateBsBattleLog(username);
 
         return new ResponseEntity(response, HttpStatus.OK);
     }
