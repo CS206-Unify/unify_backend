@@ -39,7 +39,7 @@ public class ProfileController {
     }
 
     @GetMapping("/profile/username/{username}")
-    public ResponseEntity<Response> findUserProfileByUsername(@PathVariable String username) {
+    public ResponseEntity<Response> getUserProfileByUsername(@PathVariable String username) {
         // Find a profile based on the username provided
         // Throws a InvalidUsername if username cannot be found in repository
         Response response = profileService.getUserProfileByUsername(username);
@@ -48,7 +48,7 @@ public class ProfileController {
     }
 
     @GetMapping("/profile/userId/{userId}")
-    public ResponseEntity<Response> findUserProfileByUserId(@PathVariable String userId) {
+    public ResponseEntity<Response> getUserProfileByUserId(@PathVariable String userId) {
         // Find a profile based on the username provided
         // Throws a InvalidUsername if username cannot be found in repository
         Response response = profileService.getUserProfileByUserId(userId);
@@ -57,7 +57,7 @@ public class ProfileController {
     }
 
     @GetMapping("/bsStats")
-    public ResponseEntity<Response> displayBsStats(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<Response> getBsStats(@AuthenticationPrincipal UserDetails userDetails) {
         // Get the username from the userDetails of the authenticated user
         String username = userDetails.getUsername();
 
@@ -69,13 +69,26 @@ public class ProfileController {
     }
 
     @GetMapping("/bsBattleLogs")
-    public ResponseEntity<Response> displayBsBattleLogs(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<Response> getBsBattleLogs(@AuthenticationPrincipal UserDetails userDetails) {
         // Get the username from the userDetails of the authenticated user
         String username = userDetails.getUsername();
 
         //Obtain Battle Log from username
         //Throws a UsernameNotFoundException if username cannot be found in repository
         Response response = brawlStarsAPIService.getBsBattleLog(username);
+
+        //Return a ResponseEntity to the caller
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/profile/team")
+    public ResponseEntity<Response> getUserBsTeams(@AuthenticationPrincipal UserDetails userDetails) {
+        // Get the username from the userDetails of the authenticated user
+        String username = userDetails.getUsername();
+
+        //Obtain Battle Log from username
+        //Throws a UsernameNotFoundException if username cannot be found in repository
+        Response response = profileService.getUserBsTeams(username);
 
         //Return a ResponseEntity to the caller
         return new ResponseEntity(response, HttpStatus.OK);

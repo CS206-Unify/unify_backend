@@ -4,6 +4,7 @@ import com.cs206.g2t2.data.request.auth.UpdateProfileRequest;
 import com.cs206.g2t2.data.request.profile.UpdateBsPlayerTagRequest;
 import com.cs206.g2t2.data.request.profile.UpdateGameProfileRequest;
 import com.cs206.g2t2.data.response.Response;
+import com.cs206.g2t2.data.response.bsTeam.MultiBsTeamResponse;
 import com.cs206.g2t2.data.response.common.SuccessResponse;
 import com.cs206.g2t2.data.response.user.SingleUserResponse;
 import com.cs206.g2t2.exceptions.notFound.MemberNotFoundException;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -58,6 +60,33 @@ public class ProfileServiceImpl implements ProfileService {
         //Returns SingleUserResponse if user can be found
         return SingleUserResponse.builder()
                 .user(user)
+                .build();
+    }
+
+    /**
+     * @param username a String object containing the username to be searched
+     * @return MultiBsTeamResponse object containing the user's teams
+     */
+    @Override
+    public Response getUserBsTeams(String username) throws UserNotFoundException {
+        //Finds user in repository else throws UsernameNotFoundException
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        //Obtain all teamId under the user
+        List<String> bsTeamIdList = user.getTeams();
+
+        //Store all found teams into a List
+        List<BsTeam> bsTeamList = new ArrayList<BsTeam>();
+        for (String teamId : bsTeamIdList) {
+            BsTeam bsTeam = bsTeamRepository.findBy_id(teamId)
+                    .orElseThrow(() -> new TeamNotFoundException(teamId));
+            bsTeamList.add(bsTeam);
+        }
+
+        //Returns SingleUserResponse if user can be found
+        return MultiBsTeamResponse.builder()
+                .bsTeams(bsTeamList)
                 .build();
     }
 
