@@ -4,7 +4,6 @@ import com.cs206.g2t2.data.request.team.TeamCreationRequest;
 import com.cs206.g2t2.data.request.team.TeamUpdateRequest;
 import com.cs206.g2t2.data.response.Response;
 import com.cs206.g2t2.exceptions.badRequest.TeamIsFullException;
-import com.cs206.g2t2.exceptions.notFound.MemberNotFoundException;
 import com.cs206.g2t2.exceptions.notFound.TeamNameNotFoundException;
 import com.cs206.g2t2.exceptions.notFound.UserNotFoundException;
 import com.cs206.g2t2.exceptions.notFound.UsernameNotFoundException;

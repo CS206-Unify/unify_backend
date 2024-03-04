@@ -1,7 +1,6 @@
 package com.cs206.g2t2.service.services;
 
 import com.cs206.g2t2.data.response.Response;
-import com.cs206.g2t2.data.response.brawlStars.BsPlayerBattleLogResponse;
 import org.springframework.stereotype.Service;
 
 @Service
