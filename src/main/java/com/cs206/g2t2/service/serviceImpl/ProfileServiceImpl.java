@@ -1,19 +1,19 @@
 package com.cs206.g2t2.service.serviceImpl;
 
 import com.cs206.g2t2.data.request.auth.UpdateProfileRequest;
-import com.cs206.g2t2.data.request.profile.UpdateBsPlayerTagRequest;
 import com.cs206.g2t2.data.request.profile.UpdateGameProfileRequest;
 import com.cs206.g2t2.data.response.Response;
 import com.cs206.g2t2.data.response.bsTeam.MultiBsTeamResponse;
 import com.cs206.g2t2.data.response.common.SuccessResponse;
 import com.cs206.g2t2.data.response.user.SingleUserResponse;
+import com.cs206.g2t2.exceptions.badRequest.InvalidBrawlStarsPlayerTagException;
 import com.cs206.g2t2.exceptions.notFound.MemberNotFoundException;
 import com.cs206.g2t2.exceptions.notFound.TeamNotFoundException;
 import com.cs206.g2t2.exceptions.notFound.UserNotFoundException;
 import com.cs206.g2t2.exceptions.notFound.UsernameNotFoundException;
+import com.cs206.g2t2.models.User;
 import com.cs206.g2t2.models.team.BsTeam;
 import com.cs206.g2t2.models.team.TeamMember;
-import com.cs206.g2t2.models.User;
 import com.cs206.g2t2.repository.BsTeamRepository;
 import com.cs206.g2t2.repository.UserRepository;
 import com.cs206.g2t2.service.services.ProfileService;
@@ -142,18 +142,23 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     /**
-     * @param request a UpdateBsPlayerTagRequest containing the new user's Brawl Star ID to be updated in database
+     * @param playerTag a String containing the new user's playerTag to be updated in database
      * @param username a String containing the username of the user obtained from the token
      * @return SuccessResponse "User's Brawl Star ID has been updated successfully"
      */
-    public Response updateBsPlayerTag(UpdateBsPlayerTagRequest request, String username) throws UsernameNotFoundException {
+    public Response updateBsPlayerTag(String playerTag, String username) throws UsernameNotFoundException {
 
         //Finds user in repository else throws UsernameNotFoundException
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
+        //Perform check if player tag is valid
+        if (playerTag != null && playerTag.charAt(0) == '#') {
+            throw new InvalidBrawlStarsPlayerTagException(playerTag);
+        }
+
         //Updates the region and personal bio
-        user.getBsProfile().setPlayerTag(request.getPlayerTag());
+        user.getBsProfile().setPlayerTag(playerTag);
 
         //Saves user back into repository
         userRepository.save(user);

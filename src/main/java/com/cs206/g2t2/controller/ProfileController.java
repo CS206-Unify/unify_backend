@@ -4,6 +4,8 @@ import com.cs206.g2t2.data.request.auth.UpdateProfileRequest;
 import com.cs206.g2t2.data.request.profile.UpdateBsPlayerTagRequest;
 import com.cs206.g2t2.data.request.profile.UpdateGameProfileRequest;
 import com.cs206.g2t2.data.response.Response;
+import com.cs206.g2t2.data.response.common.SuccessResponse;
+import com.cs206.g2t2.exceptions.brawlStarsApi.ExternalAPIException;
 import com.cs206.g2t2.service.services.BrawlStarsAPIService;
 import com.cs206.g2t2.service.services.ProfileService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -116,12 +118,26 @@ public class ProfileController {
         // Get the username from the userDetails of the authenticated user
         String username = userDetails.getUsername();
 
-        //Update Profile using updateProfile method in profileService
+        //Update BsPlayerTag using updateBsPlayerTag method in profileService
         //Throws a UsernameNotFoundException if username cannot be found in repository
-        Response response = profileService.updateBsPlayerTag(request, username);
+        profileService.updateBsPlayerTag(request.getPlayerTag(), username);
+
+        try {
+            //Perform updating of user bsStats
+            brawlStarsAPIService.updateBsStats(username);
+            //Perform updating of user bsBattleLogs
+            brawlStarsAPIService.updateBsBattleLog(username);
+
+        //ExternalAPIException thrown when actions cannot be done
+        } catch (ExternalAPIException externalAPIException){
+            //Change back to null if error in updating BsStats/BattleLogs
+            profileService.updateBsPlayerTag(null, username);
+            //Continue to propagate externalAPIException.
+            throw externalAPIException;
+        }
 
         //Else, return ok response
-        return new ResponseEntity(response, HttpStatus.OK);
+        return new ResponseEntity(new SuccessResponse("User's Brawl Star ID has been updated successfully"), HttpStatus.OK);
     }
 
     @PutMapping("/bsStats")
