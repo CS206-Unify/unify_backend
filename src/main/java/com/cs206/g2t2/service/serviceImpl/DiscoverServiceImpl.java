@@ -2,17 +2,15 @@ package com.cs206.g2t2.service.serviceImpl;
 
 import com.cs206.g2t2.data.response.Response;
 import com.cs206.g2t2.data.response.bsTeam.MultiBsTeamListingResponse;
-import com.cs206.g2t2.data.response.bsTeam.MultiBsTeamResponse;
 import com.cs206.g2t2.data.response.user.MultiBsProfileListingResponse;
+import com.cs206.g2t2.models.User;
 import com.cs206.g2t2.models.profile.BsProfileListing;
 import com.cs206.g2t2.models.team.BsTeam;
-import com.cs206.g2t2.models.User;
 import com.cs206.g2t2.models.team.BsTeamListing;
 import com.cs206.g2t2.service.services.DiscoverService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
