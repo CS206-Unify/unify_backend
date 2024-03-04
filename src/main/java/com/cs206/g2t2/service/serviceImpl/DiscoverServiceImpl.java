@@ -62,12 +62,12 @@ public class DiscoverServiceImpl implements DiscoverService {
         }
 
         //Sorting the results of the filtered search
-        query.with(Sort.by(Sort.Direction.DESC, "trophyRequirements"));
-        query.with(Sort.by(Sort.Direction.DESC, "min3v3Wins"));
-        query.with(Sort.by(Sort.Direction.DESC, "minDuoWins"));
-        query.with(Sort.by(Sort.Direction.DESC, "minSoloWins"));
-        query.with(Sort.by(Sort.Direction.ASC, "region"));
-        query.with(Sort.by(Sort.Direction.ASC, "language"));
+//        query.with(Sort.by(Sort.Direction.DESC, "trophyRequirements"));
+//        query.with(Sort.by(Sort.Direction.DESC, "min3v3Wins"));
+//        query.with(Sort.by(Sort.Direction.DESC, "minDuoWins"));
+//        query.with(Sort.by(Sort.Direction.DESC, "minSoloWins"));
+//        query.with(Sort.by(Sort.Direction.ASC, "region"));
+//        query.with(Sort.by(Sort.Direction.ASC, "language"));
 
         //Generate list of outputs
         List<BsTeam> bsTeamList = mongoTemplate.find(query, BsTeam.class);
@@ -119,12 +119,12 @@ public class DiscoverServiceImpl implements DiscoverService {
         }
 
         //Sorting the results of the filtered search
-        query.with(Sort.by(Sort.Direction.ASC, "bsProfile.player.trophies"));
-        query.with(Sort.by(Sort.Direction.ASC, "bsProfile.player.threeVsThreeVictories"));
-        query.with(Sort.by(Sort.Direction.ASC, "bsProfile.player.duoVictories"));
-        query.with(Sort.by(Sort.Direction.ASC, "bsProfile.player.soloVictories"));
-        query.with(Sort.by(Sort.Direction.ASC, "bsProfile.region"));
-        query.with(Sort.by(Sort.Direction.ASC, "language"));
+//        query.with(Sort.by(Sort.Direction.ASC, "bsProfile.player.trophies"));
+//        query.with(Sort.by(Sort.Direction.ASC, "bsProfile.player.threeVsThreeVictories"));
+//        query.with(Sort.by(Sort.Direction.ASC, "bsProfile.player.duoVictories"));
+//        query.with(Sort.by(Sort.Direction.ASC, "bsProfile.player.soloVictories"));
+//        query.with(Sort.by(Sort.Direction.ASC, "bsProfile.region"));
+//        query.with(Sort.by(Sort.Direction.ASC, "language"));
 
         //Generate list of outputs
         List<User> userList = mongoTemplate.find(query, User.class);
