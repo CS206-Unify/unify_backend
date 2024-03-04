@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
@@ -130,6 +131,9 @@ public class BrawlStarsAPIServiceImpl implements BrawlStarsAPIService {
         //Obtain user from userRepository and throws UsernameNotFoundException if user not found
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        //Arrange all the brawlers in order of rank, trophies, highest trophies
+        Collections.sort(player.getBrawlers());
 
         //Obtains user from BsProfile
         user.getBsProfile().setPlayer(player);

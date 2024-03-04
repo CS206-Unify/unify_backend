@@ -44,10 +44,12 @@ public class Brawler implements Comparable<Brawler>{
 
     @Override
     public int compareTo(Brawler o) {
-        int diff = this.rank - o.getRank();
+        int diff = o.rank - this.rank;
         if (diff != 0) { return diff; }
-        diff = this.trophies - o.getTrophies();
+        diff = o.trophies - this.trophies;
         if (diff != 0) { return diff; }
-        return this.highestTrophies - o.getHighestTrophies();
+        diff = o.highestTrophies - this.highestTrophies;
+        if (diff != 0) { return diff; }
+        return (int)(this.getId() - o.getId());
     }
 }

@@ -52,10 +52,8 @@ public class BsProfileListing { // Implements UserDetails so that the security.c
     private int bestBrawlerRank;
 
     private void findAndUpdateBestBrawler(Player player) {
-        //Search for best brawler by sorting the list
-        List<Brawler> brawlerList = new ArrayList<>(player.getBrawlers());
-        Collections.sort(brawlerList);
-        Brawler bestBrawler = brawlerList.get(brawlerList.size() - 1);
+        //Search for best brawler by obtaining the first brawler in the list
+        Brawler bestBrawler = player.getBrawlers().get(0);
         this.bestBrawlerId = bestBrawler.getId();
         this.bestBrawlerName = bestBrawler.getName();
         this.bestBrawlerRank = bestBrawler.getRank();
