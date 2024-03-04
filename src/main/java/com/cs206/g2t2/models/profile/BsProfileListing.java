@@ -44,14 +44,6 @@ public class BsProfileListing { // Implements UserDetails so that the security.c
     //rank stores the rank of the best brawler
     private int bestBrawlerRank;
 
-    private void findAndUpdateBestBrawler(Player player) {
-        //Search for best brawler by obtaining the first brawler in the list
-        Brawler bestBrawler = player.getBrawlers().get(0);
-        this.bestBrawlerId = bestBrawler.getId();
-        this.bestBrawlerName = bestBrawler.getName();
-        this.bestBrawlerRank = bestBrawler.getRank();
-    }
-
     //Constructor
     public BsProfileListing(User user) {
         //Update standard fields from user
@@ -64,13 +56,15 @@ public class BsProfileListing { // Implements UserDetails so that the security.c
         BsProfile bsProfile = user.getBsProfile();
         if (bsProfile != null) {
             this.region = bsProfile.getRegion();
+            this.bestBrawlerId = bsProfile.getBestBrawlerId();
+            this.bestBrawlerName = bsProfile.getBestBrawlerName();
+            this.bestBrawlerRank = bsProfile.getBestBrawlerRank();
 
             //Update standard fields from player
             Player player = bsProfile.getPlayer();
             if (player != null) {
                 this.trophies = player.getTrophies();
                 this.threeVThreeWins = player.getThreeVsThreeVictories();
-                findAndUpdateBestBrawler(player);
             }
         }
     }

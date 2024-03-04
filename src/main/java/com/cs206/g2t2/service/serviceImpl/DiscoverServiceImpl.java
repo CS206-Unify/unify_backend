@@ -3,10 +3,12 @@ package com.cs206.g2t2.service.serviceImpl;
 import com.cs206.g2t2.data.response.Response;
 import com.cs206.g2t2.data.response.bsTeam.MultiBsTeamListingResponse;
 import com.cs206.g2t2.data.response.user.MultiBsProfileListingResponse;
+import com.cs206.g2t2.exceptions.notFound.UsernameNotFoundException;
 import com.cs206.g2t2.models.User;
 import com.cs206.g2t2.models.profile.BsProfileListing;
 import com.cs206.g2t2.models.team.BsTeam;
 import com.cs206.g2t2.models.team.BsTeamListing;
+import com.cs206.g2t2.repository.UserRepository;
 import com.cs206.g2t2.service.services.DiscoverService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -24,16 +26,28 @@ import java.util.List;
 public class DiscoverServiceImpl implements DiscoverService {
 
     private final MongoTemplate mongoTemplate;
+    private final UserRepository userRepository;
 
     @Override
-    public Response discoverTeam(String username, String region, String language, Integer trophies,
+    public Response discoverBsTeam(String username, String region, String language, Integer trophies,
                                  Integer threeVThreeWins, Integer twoVTwoWins, Integer soloWins,
                                  Integer pageSize, Integer pageNumber) {
+        //Find user from repository
+        User profile = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
         //Create Pageable and Query
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Query query = new Query().with(pageable);
 
         //Setting Criteria to filter repository
+        //Removes searches for teams that user is already in
+        Criteria criteria = new Criteria();
+        for (String teamId : profile.getTeams()) {
+            criteria.andOperator(Criteria.where("_id").ne(teamId));
+        }
+        query.addCriteria(criteria);
+
         //If region is not null or "Any", apply criteria to find results that MATCH region
         if (region != null && region != "Any") {
             query.addCriteria(Criteria.where("region").is(region));
@@ -83,14 +97,23 @@ public class DiscoverServiceImpl implements DiscoverService {
     }
 
     @Override
-    public Response discoverProfile(String username, String region, String language, Integer trophies,
+    public Response discoverBsProfile(String username, String region, String language, Integer trophies,
                                     Integer threeVThreeWins, Integer twoVTwoWins, Integer soloWins,
                                     Integer pageSize, Integer pageNumber) {
+        //Find user from repository
+        User profile = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
         //Create Pageable and Query
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Query query = new Query().with(pageable);
 
         //Setting Criteria to filter repository
+        //Set condition that playerTag must not be null
+        query.addCriteria(Criteria.where("bsProfile.playerTag").ne(null));
+        //Set condition that user cannot find himself
+        query.addCriteria(Criteria.where("_id").ne(profile.get_id()));
+
         //If region is not null or "Any", apply criteria to find results that MATCH region
         if (region != null && region != "Any") {
             query.addCriteria(Criteria.where("bsProfile.region").is(region));

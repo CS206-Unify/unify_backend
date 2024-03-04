@@ -10,6 +10,7 @@ import com.cs206.g2t2.models.User;
 import com.cs206.g2t2.models.brawlStarsAPI.battleLog.Battle;
 import com.cs206.g2t2.models.brawlStarsAPI.battleLog.BattleLog;
 import com.cs206.g2t2.models.brawlStarsAPI.battleLog.BattleLogList;
+import com.cs206.g2t2.models.brawlStarsAPI.playerInfo.Brawler;
 import com.cs206.g2t2.models.brawlStarsAPI.playerInfo.Player;
 import com.cs206.g2t2.repository.UserRepository;
 import com.cs206.g2t2.service.services.BrawlStarsAPIService;
@@ -135,8 +136,14 @@ public class BrawlStarsAPIServiceImpl implements BrawlStarsAPIService {
         //Arrange all the brawlers in order of rank, trophies, highest trophies
         Collections.sort(player.getBrawlers());
 
-        //Obtains user from BsProfile
+        //Update Player in user
         user.getBsProfile().setPlayer(player);
+
+        //Update best brawler details in BsProfile
+        Brawler bestBrawler = player.getBrawlers().get(0);
+        user.getBsProfile().setBestBrawlerId(bestBrawler.getId());
+        user.getBsProfile().setBestBrawlerName(bestBrawler.getName());
+        user.getBsProfile().setBestBrawlerRank(bestBrawler.getRank());
 
         //Saves user back into userRepository
         userRepository.save(user);
@@ -228,9 +235,9 @@ public class BrawlStarsAPIServiceImpl implements BrawlStarsAPIService {
         }
 
         //Updates the variables in the field
-        user.setWins(wins);
-        user.setLosses(losses);
-        user.setDraws(draws);
+        user.getBsProfile().setWins(wins);
+        user.getBsProfile().setLosses(losses);
+        user.getBsProfile().setDraws(draws);
 
         //Saves user back into userRepository
         userRepository.save(user);
