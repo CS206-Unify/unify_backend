@@ -1,11 +1,13 @@
 package com.cs206.g2t2.service.serviceImpl;
 
 import com.cs206.g2t2.data.response.Response;
+import com.cs206.g2t2.data.response.bsTeam.MultiBsTeamListingResponse;
 import com.cs206.g2t2.data.response.bsTeam.MultiBsTeamResponse;
 import com.cs206.g2t2.data.response.user.MultiBsProfileListingResponse;
 import com.cs206.g2t2.models.profile.BsProfileListing;
 import com.cs206.g2t2.models.team.BsTeam;
 import com.cs206.g2t2.models.User;
+import com.cs206.g2t2.models.team.BsTeamListing;
 import com.cs206.g2t2.service.services.DiscoverService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -70,9 +72,15 @@ public class DiscoverServiceImpl implements DiscoverService {
         //Generate list of outputs
         List<BsTeam> bsTeamList = mongoTemplate.find(query, BsTeam.class);
 
+        //Convert output into List<BsTeamListing>
+        List<BsTeamListing> bsTeamListings = new ArrayList<>();
+        for (BsTeam bsTeam : bsTeamList) {
+            bsTeamListings.add(new BsTeamListing(bsTeam));
+        }
+
         //Generate Response
-        return MultiBsTeamResponse.builder()
-                .bsTeams(bsTeamList)
+        return MultiBsTeamListingResponse.builder()
+                .bsTeamListings(bsTeamListings)
                 .build();
     }
 
