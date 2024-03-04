@@ -119,10 +119,10 @@ public class DiscoverServiceImpl implements DiscoverService {
         }
 
         //Sorting the results of the filtered search
-        query.with(Sort.by(Sort.Direction.DESC, "bsProfile.player.trophies"));
-        query.with(Sort.by(Sort.Direction.DESC, "bsProfile.player.threeVsThreeVictories"));
-        query.with(Sort.by(Sort.Direction.DESC, "bsProfile.player.duoVictories"));
-        query.with(Sort.by(Sort.Direction.DESC, "bsProfile.player.soloVictories"));
+        query.with(Sort.by(Sort.Direction.ASC, "bsProfile.player.trophies"));
+        query.with(Sort.by(Sort.Direction.ASC, "bsProfile.player.threeVsThreeVictories"));
+        query.with(Sort.by(Sort.Direction.ASC, "bsProfile.player.duoVictories"));
+        query.with(Sort.by(Sort.Direction.ASC, "bsProfile.player.soloVictories"));
         query.with(Sort.by(Sort.Direction.ASC, "bsProfile.region"));
         query.with(Sort.by(Sort.Direction.ASC, "language"));
 
