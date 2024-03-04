@@ -1,19 +1,12 @@
-package com.cs206.g2t2.models;
+package com.cs206.g2t2.models.profile;
 
+import com.cs206.g2t2.models.User;
 import com.cs206.g2t2.models.brawlStarsAPI.playerInfo.Brawler;
 import com.cs206.g2t2.models.brawlStarsAPI.playerInfo.Player;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor

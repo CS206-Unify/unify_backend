@@ -9,7 +9,7 @@ import com.cs206.g2t2.exceptions.badRequest.DuplicatedEmailException;
 import com.cs206.g2t2.exceptions.badRequest.DuplicatedUsernameException;
 import com.cs206.g2t2.exceptions.unauthorized.InvalidCredentialsException;
 import com.cs206.g2t2.exceptions.notFound.UsernameNotFoundException;
-import com.cs206.g2t2.models.BsProfile;
+import com.cs206.g2t2.models.profile.BsProfile;
 import com.cs206.g2t2.models.User;
 import com.cs206.g2t2.repository.UserRepository;
 import com.cs206.g2t2.service.services.AuthenticationService;

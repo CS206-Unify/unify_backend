@@ -1,4 +1,4 @@
-package com.cs206.g2t2.models;
+package com.cs206.g2t2.models.profile;
 
 import com.cs206.g2t2.models.brawlStarsAPI.playerInfo.Player;
 import lombok.AllArgsConstructor;

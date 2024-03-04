@@ -1,4 +1,4 @@
-package com.cs206.g2t2.models;
+package com.cs206.g2t2.models.team;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

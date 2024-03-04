@@ -1,5 +1,6 @@
 package com.cs206.g2t2.models;
 
+import com.cs206.g2t2.models.profile.BsProfile;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
