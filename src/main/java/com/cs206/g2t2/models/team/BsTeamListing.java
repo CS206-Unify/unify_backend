@@ -28,6 +28,9 @@ public class BsTeamListing {
     // imageString stores the S3 image link, can be null if there is no image
     private String imageString;
 
+    // region stores the team's competing region
+    private String region;
+
     // trophyRequirements stores the number of trophies that user need before joining the team
     private int trophyRequirements;
 
@@ -46,6 +49,7 @@ public class BsTeamListing {
         this.teamName = bsTeam.getTeamName();
         this.currentTeamSize = bsTeam.getMemberList().size();
         this.maximumTeamSize = bsTeam.getMaximumTeamSize();
+        this.region = bsTeam.getRegion();
         this.imageString = bsTeam.getImageString();
         this.trophyRequirements = bsTeam.getTrophyRequirements();
         this.min3v3Wins = bsTeam.getMin3v3Wins();
