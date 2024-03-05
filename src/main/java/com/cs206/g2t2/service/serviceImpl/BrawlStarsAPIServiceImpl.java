@@ -225,13 +225,27 @@ public class BrawlStarsAPIServiceImpl implements BrawlStarsAPIService {
         //Loops through all 25 battleLogs
         for (BattleLog battleLog : battleLogList.getItems()) {
             Battle battle = battleLog.getBattle();
-            if (battle.getResult().equals("victory")) {
-                wins++;
-            } else if (battle.getResult().equals("defeat")) {
-                losses++;
-            } else if (battle.getResult().equals("draw")) {
-                draws++;
+            //Consider that battle is a 3v3 match
+            System.out.println(battle);
+            if (battle.getResult() != null) {
+                if (battle.getResult().equals("victory")) {
+                    wins++;
+                } else if (battle.getResult().equals("defeat")) {
+                    losses++;
+                } else if (battle.getResult().equals("draw")) {
+                    draws++;
+                }
+            //Consider that battle is a Showdown (Solo/Duo Showdown)
+            } else {
+                if (battle.getTrophyChange() > 0) {
+                    wins++;
+                } else if (battle.getTrophyChange() < 0) {
+                    losses++;
+                } else if (battle.getTrophyChange() == 0) {
+                    draws++;
+                }
             }
+
         }
 
         //Updates the variables in the field
