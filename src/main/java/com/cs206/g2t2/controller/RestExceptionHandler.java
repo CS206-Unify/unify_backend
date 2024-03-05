@@ -72,6 +72,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(body);
     }
 
+    @ExceptionHandler(NullPointerException.class)
+    protected ResponseEntity<Object> handleNullPointerException(NullPointerException nullPointerException) {
+        Map<String, Object> body = returnMapFromException(nullPointerException, HttpStatus.INTERNAL_SERVER_ERROR);
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(body);
+    }
+
     @ExceptionHandler(ExternalAPIException.class)
     protected ResponseEntity<Object> handleExternalApiException(ExternalAPIException externalAPIException) {
         HttpStatusCode status = HttpStatus.valueOf(externalAPIException.getStatusCode());
