@@ -225,8 +225,8 @@ public class BrawlStarsAPIServiceImpl implements BrawlStarsAPIService {
         //Loops through all 25 battleLogs
         for (BattleLog battleLog : battleLogList.getItems()) {
             Battle battle = battleLog.getBattle();
+//            System.out.println(battle);
             //Consider that battle is a 3v3 match
-            System.out.println(battle);
             if (battle.getResult() != null) {
                 if (battle.getResult().equals("victory")) {
                     wins++;
@@ -237,12 +237,12 @@ public class BrawlStarsAPIServiceImpl implements BrawlStarsAPIService {
                 }
             //Consider that battle is a Showdown (Solo/Duo Showdown)
             } else {
-                if (battle.getTrophyChange() > 0) {
-                    wins++;
+                if (battle.getTrophyChange() == null || battle.getTrophyChange() == 0) {
+                    draws++;
                 } else if (battle.getTrophyChange() < 0) {
                     losses++;
-                } else if (battle.getTrophyChange() == 0) {
-                    draws++;
+                } else if (battle.getTrophyChange() > 0) {
+                    wins++;
                 }
             }
 
