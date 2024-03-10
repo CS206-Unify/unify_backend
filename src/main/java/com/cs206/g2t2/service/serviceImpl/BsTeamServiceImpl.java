@@ -174,6 +174,18 @@ public class BsTeamServiceImpl implements BsTeamService {
             throw new TeamIsFullException(bsTeam.getTeamName(), bsTeam.getMaximumTeamSize());
         }
 
+        //Perform checks if current member is player is already in team
+        boolean found = false;
+        for (TeamMember teamMember : bsTeam.getMemberList()) {
+            if (teamMember.getUserId().equals(member.get_id())) {
+                found = true;
+                break;
+            }
+        }
+
+        //If current member is found, throw new MemberNotFoundException
+        if (found) { throw new MemberNotFoundException(member.getUsername(), bsTeam.getTeamName()); }
+
         //Create TeamMember Object and add to the bsTeam as a member
         TeamMember teamMember = TeamMember.builder()
                 .userId(member.get_id())
