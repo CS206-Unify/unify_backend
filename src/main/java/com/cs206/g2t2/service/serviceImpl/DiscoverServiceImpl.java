@@ -49,7 +49,7 @@ public class DiscoverServiceImpl implements DiscoverService {
         query.addCriteria(criteria);
 
         //If region is not null or "Any", apply criteria to find results that MATCH region
-        if (region != null && region != "Any") {
+        if (region != null && !region.equals("Any")) {
             query.addCriteria(Criteria.where("region").is(region));
         }
         //If language is not null or "Any", apply criteria to find results that MATCH language
@@ -115,7 +115,7 @@ public class DiscoverServiceImpl implements DiscoverService {
         query.addCriteria(Criteria.where("_id").ne(profile.get_id()));
 
         //If region is not null or "Any", apply criteria to find results that MATCH region
-        if (region != null && region != "Any") {
+        if (region != null && !region.equals("Any")) {
             query.addCriteria(Criteria.where("bsProfile.region").is(region));
         }
         //If language is not null or "Any", apply criteria to find results that MATCH language
