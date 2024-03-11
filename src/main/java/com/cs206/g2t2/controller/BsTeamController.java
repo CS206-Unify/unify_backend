@@ -101,5 +101,32 @@ public class BsTeamController {
         //If successful, the response is encapsulated with HTTP code of 200(ok) and contains the User object
         return new ResponseEntity(response, HttpStatus.OK);
     }
+
+    @DeleteMapping("/team/{teamId}/member/{memberId}")
+    public ResponseEntity<Response> removeMember(@PathVariable("teamId") String teamId,
+                                                 @PathVariable("memberId") String memberId,
+                                                 @AuthenticationPrincipal UserDetails userDetails) {
+        // Get the username from the userDetails of the authenticated user
+        String username = userDetails.getUsername();
+
+        //Create team using createTeam method in bsTeamService
+        Response response = bsTeamService.removeMember(username, teamId, memberId);
+
+        //If successful, the response is encapsulated with HTTP code of 200(ok) and contains the User object
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/team/{teamId}")
+    public ResponseEntity<Response> deleteTeam(@PathVariable("teamId") String teamId,
+                                              @AuthenticationPrincipal UserDetails userDetails) {
+        // Get the username from the userDetails of the authenticated user
+        String username = userDetails.getUsername();
+
+        //Create team using createTeam method in bsTeamService
+        Response response = bsTeamService.deleteTeam(username, teamId);
+
+        //If successful, the response is encapsulated with HTTP code of 200(ok) and contains the User object
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
 }
 
