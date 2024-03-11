@@ -21,9 +21,16 @@ public interface BsTeamService {
     Response addMember(String username, String teamName, String addUserName)
             throws UsernameNotFoundException, UserNotFoundException, TeamNameNotFoundException, TeamIsFullException;
 
-    Response promoteMember(String username, String teamName, String addUserName)
+    Response promoteMember(String username, String teamId, String addUserName)
             throws UsernameNotFoundException, UserNotFoundException, TeamNameNotFoundException;
 
-    Response demoteMember(String username, String teamName, String addUserName)
+    Response demoteMember(String username, String teamId, String memberId)
             throws UsernameNotFoundException, UserNotFoundException, TeamNameNotFoundException;
+
+    Response removeMember(String username, String teamId, String memberId)
+            throws UsernameNotFoundException, UserNotFoundException, TeamNameNotFoundException;
+
+    Response deleteTeam(String username, String teamId)
+            throws UsernameNotFoundException, UserNotFoundException, TeamNameNotFoundException;
+
 }

@@ -321,4 +321,104 @@ public class BsTeamServiceImpl implements BsTeamService {
                 .message("Team Member " + member.getUsername() + " has been demoted successfully")
                 .build();
     }
+
+    @Override
+    public Response removeMember(String username, String teamId, String memberId)
+            throws UsernameNotFoundException, UserNotFoundException, TeamNameNotFoundException {
+
+        //Find User from userRepository
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        //Find Member from userRepository
+        User member = userRepository.findBy_id(memberId)
+                .orElseThrow(() -> new UserNotFoundException(memberId));
+
+        //Find Team from bsTeamRepository
+        BsTeam bsTeam = bsTeamRepository.findBy_id(teamId)
+                .orElseThrow(() -> new TeamNotFoundException(teamId));
+
+        //Perform checks if the member can be found
+        TeamMember userMember = null;
+        TeamMember teamMember = null;
+        for(TeamMember tm : bsTeam.getMemberList()) {
+            if (tm.getUserId().equals(user.get_id())) {
+                userMember = tm;
+            }
+            if (tm.getUserId().equals(member.get_id())) {
+                teamMember = tm;
+            }
+        }
+
+        //If user/member cannot be found as a member, throw new MemberNotFoundException
+        if (userMember == null || teamMember == null) {
+            throw new MemberNotFoundException(userMember == null ? user.getUsername() : member.getUsername(),
+                    bsTeam.getTeamName());
+        }
+
+        //Perform checks if the user has higher permissions than member or joined earlier than someone of the same permissions
+        if (teamMember.getRole().isHigherRole(userMember.getRole()) ||
+           (userMember.getRole().isEqualRole(teamMember.getRole()) && userMember.getJoinDate().isAfter(teamMember.getJoinDate()))) {
+            throw new ForbiddenException();
+        }
+
+        //Perform removal from team
+        bsTeam.getMemberList().remove(teamMember);
+
+        //Perform removal from user
+        member.getTeams().remove(bsTeam.get_id());
+
+        //Perform saving of bsTeam and member
+        userRepository.save(member);
+        bsTeamRepository.save(bsTeam);
+
+        //Return SuccessResponse
+        return SuccessResponse.builder()
+                .message("Team Member " + member.getUsername() + " has been removed from team successfully")
+                .build();
+    }
+
+    @Override
+    public Response deleteTeam(String username, String teamId)
+            throws UsernameNotFoundException, UserNotFoundException, TeamNameNotFoundException {
+
+        //Find User from userRepository
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        //Find Team from bsTeamRepository
+        BsTeam bsTeam = bsTeamRepository.findBy_id(teamId)
+                .orElseThrow(() -> new TeamNotFoundException(teamId));
+
+        //Checks if user is a team member of the team
+        TeamMember userMember = null;
+        for(TeamMember teamMember : bsTeam.getMemberList()) {
+            if (teamMember.getUserId().equals(user.get_id())) {
+                userMember = teamMember;
+                break;
+            }
+        }
+
+        //If user is not found, throw new Member
+        if (userMember == null) { throw new MemberNotFoundException(user.getUsername(), bsTeam.getTeamName()); }
+
+        //Checks if user is an owner to delete group
+        if (userMember.getRole() != TeamMember.Role.OWNER) { throw new ForbiddenException(); }
+
+        //Perform removal of teamId from all members
+        for (TeamMember teamMember : bsTeam.getMemberList()) {
+            User teamUser = userRepository.findBy_id(teamMember.getUserId())
+                    .orElseThrow(() -> new UserNotFoundException(teamMember.getUserId()));
+            teamUser.getTeams().remove(bsTeam.get_id());
+            userRepository.save(teamUser);
+        }
+
+        //Delete the team from the bsTeamRepository
+        bsTeamRepository.deleteById(bsTeam.get_id());
+
+        //Return SuccessResponse
+        return SuccessResponse.builder()
+                .message("Team has been deleted successfully")
+                .build();
+    }
 }
