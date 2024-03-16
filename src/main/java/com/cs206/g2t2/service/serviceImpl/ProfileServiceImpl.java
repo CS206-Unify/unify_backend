@@ -3,6 +3,7 @@ package com.cs206.g2t2.service.serviceImpl;
 import com.cs206.g2t2.data.request.auth.UpdateProfileRequest;
 import com.cs206.g2t2.data.request.profile.UpdateGameProfileRequest;
 import com.cs206.g2t2.data.response.Response;
+import com.cs206.g2t2.data.response.bsTeam.MultiBsTeamListingResponse;
 import com.cs206.g2t2.data.response.bsTeam.MultiBsTeamResponse;
 import com.cs206.g2t2.data.response.common.SuccessResponse;
 import com.cs206.g2t2.data.response.user.SingleUserResponse;
@@ -13,6 +14,7 @@ import com.cs206.g2t2.exceptions.notFound.UserNotFoundException;
 import com.cs206.g2t2.exceptions.notFound.UsernameNotFoundException;
 import com.cs206.g2t2.models.User;
 import com.cs206.g2t2.models.team.BsTeam;
+import com.cs206.g2t2.models.team.BsTeamListing;
 import com.cs206.g2t2.models.team.TeamMember;
 import com.cs206.g2t2.repository.BsTeamRepository;
 import com.cs206.g2t2.repository.UserRepository;
@@ -77,16 +79,16 @@ public class ProfileServiceImpl implements ProfileService {
         List<String> bsTeamIdList = user.getTeams();
 
         //Store all found teams into a List
-        List<BsTeam> bsTeamList = new ArrayList<BsTeam>();
+        List<BsTeamListing> bsTeamListings = new ArrayList<BsTeamListing>();
         for (String teamId : bsTeamIdList) {
             BsTeam bsTeam = bsTeamRepository.findBy_id(teamId)
                     .orElseThrow(() -> new TeamNotFoundException(teamId));
-            bsTeamList.add(bsTeam);
+            bsTeamListings.add(new BsTeamListing(bsTeam));
         }
 
         //Returns SingleUserResponse if user can be found
-        return MultiBsTeamResponse.builder()
-                .bsTeams(bsTeamList)
+        return MultiBsTeamListingResponse.builder()
+                .bsTeamListings(bsTeamListings)
                 .build();
     }
 
