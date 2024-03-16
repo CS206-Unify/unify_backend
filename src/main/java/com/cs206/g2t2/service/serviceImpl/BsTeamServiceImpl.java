@@ -89,7 +89,12 @@ public class BsTeamServiceImpl implements BsTeamService {
     }
 
     @Override
-    public Response createBsTeam(TeamCreationRequest request, String username) throws UsernameNotFoundException {
+    public Response createBsTeam(TeamCreationRequest request, String username) throws UsernameNotFoundException, GameNotFoundException {
+
+        //Rejects create request if gameName != "Brawl Stars"
+        if (!"Brawl Stars".equals(request.getGameName())) {
+            throw new GameNotFoundException(request.getGameName());
+        }
 
         //Find user from userRepository
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
