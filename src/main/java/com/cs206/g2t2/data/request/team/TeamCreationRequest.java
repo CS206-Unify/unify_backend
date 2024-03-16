@@ -21,6 +21,9 @@ public class TeamCreationRequest {
             message = "Team Name must be between {min} and {max} characters long")
     private String teamName;
 
+    @NotBlank(message = "Game Name is required")
+    private String gameName;
+
     // region stores the competing region of the team
     @NotBlank(message = "Region is required")
     private String region;
