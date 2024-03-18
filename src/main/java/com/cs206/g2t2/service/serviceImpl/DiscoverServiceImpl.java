@@ -42,11 +42,13 @@ public class DiscoverServiceImpl implements DiscoverService {
 
         //Setting Criteria to filter repository
         //Removes searches for teams that user is already in
-        Criteria criteria = new Criteria();
-        for (String teamId : profile.getTeams()) {
-            criteria.andOperator(Criteria.where("_id").ne(teamId));
+        if (profile.getTeams().size() != 0) {
+            Criteria criteria = Criteria.where("_id").ne(profile.getTeams().get(0));
+            for (int i = 1 ; i < profile.getTeams().size() ; i++) {
+                criteria.and(profile.getTeams().get(i));
+            }
+            query.addCriteria(criteria);
         }
-        query.addCriteria(criteria);
 
         //If region is not null or "Any", apply criteria to find results that MATCH region
         if (region != null && !region.equals("Any")) {
