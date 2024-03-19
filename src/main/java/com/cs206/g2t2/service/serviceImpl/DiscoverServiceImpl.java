@@ -5,6 +5,7 @@ import com.cs206.g2t2.data.response.bsTeam.MultiBsTeamListingResponse;
 import com.cs206.g2t2.data.response.user.MultiBsProfileListingResponse;
 import com.cs206.g2t2.exceptions.notFound.UsernameNotFoundException;
 import com.cs206.g2t2.models.User;
+import com.cs206.g2t2.models.profile.BsProfile;
 import com.cs206.g2t2.models.profile.BsProfileListing;
 import com.cs206.g2t2.models.team.BsTeam;
 import com.cs206.g2t2.models.team.BsTeamListing;
@@ -19,6 +20,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -28,10 +30,15 @@ public class DiscoverServiceImpl implements DiscoverService {
     private final MongoTemplate mongoTemplate;
     private final UserRepository userRepository;
 
-    @Override
-    public Response discoverBsTeam(String username, String region, Integer trophies,
-                                 Integer threeVThreeWins, Integer twoVTwoWins, Integer soloWins,
-                                 Integer pageSize, Integer pageNumber) {
+    private static final int BsTeamParamNum = 5;
+
+    private static final int BsProfileParamNum = 6;
+
+    private static final int MinHomePageEntries = 2;
+
+    private Query createBsTeamQuery(String username, String region, Integer trophies,
+                                    Integer threeVThreeWins, Integer twoVTwoWins, Integer soloWins,
+                                    Integer pageSize, Integer pageNumber) {
         //Find user from repository
         User profile = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
@@ -72,14 +79,30 @@ public class DiscoverServiceImpl implements DiscoverService {
 //        query.with(Sort.by(Sort.Direction.DESC, "minSoloWins"));
 //        query.with(Sort.by(Sort.Direction.ASC, "region"));
 
-        //Generate list of outputs
-        List<BsTeam> bsTeamList = mongoTemplate.find(query, BsTeam.class);
+        return query;
+    }
 
-        //Convert output into List<BsTeamListing>
+    private List<BsTeamListing> getBsTeamListing(List<BsTeam> bsTeamList) {
         List<BsTeamListing> bsTeamListings = new ArrayList<>();
         for (BsTeam bsTeam : bsTeamList) {
             bsTeamListings.add(new BsTeamListing(bsTeam));
         }
+        return bsTeamListings;
+    }
+
+    @Override
+    public Response discoverBsTeam(String username, String region, Integer trophies,
+                                 Integer threeVThreeWins, Integer twoVTwoWins, Integer soloWins,
+                                 Integer pageSize, Integer pageNumber) {
+
+        //Create Query to find Users
+        Query query = createBsTeamQuery(username, region, trophies, threeVThreeWins, twoVTwoWins, soloWins, pageSize, pageNumber);
+
+        //Generate list of outputs
+        List<BsTeam> bsTeamList = mongoTemplate.find(query, BsTeam.class);
+
+        //Convert output into List<BsTeamListing>
+        List<BsTeamListing> bsTeamListings = getBsTeamListing(bsTeamList);
 
         //Generate Response
         return MultiBsTeamListingResponse.builder()
@@ -88,7 +111,73 @@ public class DiscoverServiceImpl implements DiscoverService {
     }
 
     @Override
-    public Response discoverBsProfile(String username, String region, String language, Integer trophies,
+    public Response discoverHomePageBsTeam(String username, String region, Integer trophies,
+                                   Integer threeVThreeWins, Integer twoVTwoWins, Integer soloWins,
+                                   Integer pageSize, Integer pageNumber) {
+
+        //Create List storing booleans on whether a variable should be used for filtering
+        List<Boolean> usage = new ArrayList<Boolean>(BsTeamParamNum);
+        for (int i = 0 - 1 ; i < BsTeamParamNum; i++) {
+            usage.add(true);
+        }
+
+        //Initialize the storage for the bsTeamList
+        List<BsTeam> bsTeamList = null;
+
+        //Loops through at most BsTeamParamNum to change remove parameters from the back
+        for (int i = BsTeamParamNum - 1 ; i >= 0 ; i--) {
+
+            //Create Query to find Users
+            Query query = createBsTeamQuery(
+                    username,
+                    usage.get(0) ? region : null,
+                    usage.get(1) ? trophies : null,
+                    usage.get(2) ? threeVThreeWins : null,
+                    usage.get(3) ? twoVTwoWins : null,
+                    usage.get(4) ? soloWins : null,
+                    pageSize,
+                    pageNumber);
+
+            //Generate list of outputs
+            bsTeamList = mongoTemplate.find(query, BsTeam.class);
+
+            //If the criteria have been met
+            if (bsTeamList.size() > MinHomePageEntries) {
+                System.out.println("break");
+                break;
+            }
+
+            //Else if criteria not met yet, widen the search parameter by not using the last parameter
+            usage.set(i, false);
+        }
+
+        //Final Attempt to find teams with no filters at all
+        if (bsTeamList.size() < MinHomePageEntries) {
+            //Create Query to find Users
+            Query query = createBsTeamQuery(
+                    username,
+                    usage.get(0) ? region : null,
+                    usage.get(1) ? trophies : null,
+                    usage.get(2) ? threeVThreeWins : null,
+                    usage.get(3) ? twoVTwoWins : null,
+                    usage.get(4) ? soloWins : null,
+                    pageSize,
+                    pageNumber);
+
+            //Generate list of outputs
+            bsTeamList = mongoTemplate.find(query, BsTeam.class);
+        }
+
+        //Convert output into List<BsTeamListing>
+        List<BsTeamListing> bsTeamListings = getBsTeamListing(bsTeamList);
+
+        //Generate Response
+        return MultiBsTeamListingResponse.builder()
+                .bsTeamListings(bsTeamListings)
+                .build();
+    }
+
+    private Query createBsProfileQuery(String username, String region, String language, Integer trophies,
                                     Integer threeVThreeWins, Integer twoVTwoWins, Integer soloWins,
                                     Integer pageSize, Integer pageNumber) {
         //Find user from repository
@@ -138,14 +227,98 @@ public class DiscoverServiceImpl implements DiscoverService {
 //        query.with(Sort.by(Sort.Direction.ASC, "bsProfile.region"));
 //        query.with(Sort.by(Sort.Direction.ASC, "language"));
 
-        //Generate list of outputs
-        List<User> userList = mongoTemplate.find(query, User.class);
+        return query;
+    }
 
-        //Convert output into List<BsProfileListing>
+    private List<BsProfileListing> getBsProfileListing(List<User> userList) {
         List<BsProfileListing> bsProfileListingList = new ArrayList<>();
         for (User user : userList) {
             bsProfileListingList.add(new BsProfileListing(user));
         }
+        return bsProfileListingList;
+    }
+
+    @Override
+    public Response discoverBsProfile(String username, String region, String language, Integer trophies,
+                                    Integer threeVThreeWins, Integer twoVTwoWins, Integer soloWins,
+                                    Integer pageSize, Integer pageNumber) {
+
+        //Create Query using private helper
+        Query query = createBsProfileQuery(username, region, language, trophies, threeVThreeWins, twoVTwoWins, soloWins, pageSize, pageNumber);
+
+        //Generate list of outputs
+        List<User> userList = mongoTemplate.find(query, User.class);
+
+        //Convert output into List<BsProfileListing>
+        List<BsProfileListing> bsProfileListingList = getBsProfileListing(userList);
+
+        //Generate Response
+        return MultiBsProfileListingResponse.builder()
+                .bsProfileListingList(bsProfileListingList)
+                .build();
+    }
+
+    @Override
+    public Response discoverHomePageBsProfile(String username, String region, String language, Integer trophies,
+                                              Integer threeVThreeWins, Integer twoVTwoWins, Integer soloWins,
+                                              Integer pageSize, Integer pageNumber) {
+
+        //Create List storing booleans on whether a variable should be used for filtering
+        List<Boolean> usage = new ArrayList<>(BsProfileParamNum);
+        for (int i = 0; i < BsProfileParamNum ; i++) {
+            usage.add(true);
+        }
+
+        //Initialize the storage for the bsTeamList
+        List<User> userList = null;
+
+        //Loops through at most BsTeamParamNum to change remove parameters from the back
+        for (int i = 0 ; i < BsProfileParamNum ; i++) {
+
+            //Create Query to find Users
+            Query query = createBsProfileQuery(
+                    username,
+                    usage.get(0) ? region : null,
+                    usage.get(1) ? language : null,
+                    usage.get(2) ? trophies : null,
+                    usage.get(3) ? threeVThreeWins : null,
+                    usage.get(4) ? twoVTwoWins : null,
+                    usage.get(5) ? soloWins : null,
+                    pageSize,
+                    pageNumber);
+
+            //Generate list of outputs
+            userList = mongoTemplate.find(query, User.class);
+
+            //If the criteria have been met
+            if (userList.size() > MinHomePageEntries) {
+                break;
+            }
+
+            //Else if criteria not met yet, widen the search parameter by not using the last parameter
+            usage.set(i, false);
+        }
+
+        //Final Attempt to find teams with no filters at all
+        if (userList.size() < MinHomePageEntries) {
+            //Create Query to find Users
+            Query query = createBsProfileQuery(
+                    username,
+                    usage.get(0) ? region : null,
+                    usage.get(1) ? language : null,
+                    usage.get(2) ? trophies : null,
+                    usage.get(3) ? threeVThreeWins : null,
+                    usage.get(4) ? twoVTwoWins : null,
+                    usage.get(5) ? soloWins : null,
+                    pageSize,
+                    pageNumber);
+
+            //Generate list of outputs
+            userList = mongoTemplate.find(query, User.class);
+        }
+
+        //Convert output into List<BsTeamListing>
+        List<BsProfileListing> bsProfileListingList = getBsProfileListing(userList);
 
         //Generate Response
         return MultiBsProfileListingResponse.builder()

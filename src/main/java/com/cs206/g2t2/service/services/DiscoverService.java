@@ -10,8 +10,16 @@ public interface DiscoverService {
                           Integer threeVThreeWins, Integer twoVTwoWins, Integer soloWins,
                           Integer pageSize, Integer pageNumber);
 
+    Response discoverHomePageBsTeam(String username, String region, Integer trophies,
+                            Integer threeVThreeWins, Integer twoVTwoWins, Integer soloWins,
+                            Integer pageSize, Integer pageNumber);
+
     Response discoverBsProfile(String username, String region, String language, Integer trophies,
                              Integer threeVThreeWins, Integer twoVTwoWins, Integer soloWins,
                              Integer pageSize, Integer pageNumber);
+
+    Response discoverHomePageBsProfile(String username, String region, String language, Integer trophies,
+                                       Integer threeVThreeWins, Integer twoVTwoWins, Integer soloWins,
+                                       Integer pageSize, Integer pageNumber);
 
 }
