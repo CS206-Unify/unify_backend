@@ -45,7 +45,6 @@ public class BsTeamServiceImpl implements BsTeamService {
                 .teamName(request.getTeamName())
                 .region(request.getRegion())
                 .teamCreationDate(LocalDateTime.now())
-                .language(request.getLanguage())
                 .maximumTeamSize(request.getMaximumTeamSize())
                 .imageString(null)
                 .trophyRequirements(0)
@@ -137,7 +136,24 @@ public class BsTeamServiceImpl implements BsTeamService {
         //Checks if current user is an admin user or owner, else throws ForbiddenException
         isOwnerOrAdminUser(user, bsTeam);
 
+        //Checks if teamName has been modified
+        if (!request.getTeamName().equals(bsTeam.getTeamName())) {
+            //Perform checks whether new teamName can be found in the database
+            if (bsTeamRepository.findByTeamName(request.getTeamName()).isPresent()) {
+                //If found, throw DuplicatedTeamNameException
+                throw new DuplicatedTeamNameException(request.getTeamName());
+            }
+        }
+
+        //Checks if the maximumTeamSize is valid
+        if (bsTeam.getMemberList().size() > request.getMaximumTeamSize()) {
+            throw new TeamIsFullException(bsTeam.getTeamName(), request.getMaximumTeamSize());
+        }
+
         //Perform update of all fields
+        bsTeam.setTeamName(request.getTeamName());
+        bsTeam.setRegion(request.getRegion());
+        bsTeam.setMaximumTeamSize(request.getMaximumTeamSize());
         bsTeam.setTrophyRequirements(request.getTrophyRequirements());
         bsTeam.setMin3v3Wins(request.getMin3v3Wins());
         bsTeam.setMinDuoWins(request.getMinDuoWins());
