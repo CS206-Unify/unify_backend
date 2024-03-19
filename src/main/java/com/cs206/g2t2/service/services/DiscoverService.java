@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface DiscoverService {
 
-    Response discoverBsTeam(String username, String region, String language, Integer trophies,
+    Response discoverBsTeam(String username, String region, Integer trophies,
                           Integer threeVThreeWins, Integer twoVTwoWins, Integer soloWins,
                           Integer pageSize, Integer pageNumber);
 

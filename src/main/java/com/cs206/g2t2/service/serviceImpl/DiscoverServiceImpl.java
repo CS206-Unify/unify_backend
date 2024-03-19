@@ -29,7 +29,7 @@ public class DiscoverServiceImpl implements DiscoverService {
     private final UserRepository userRepository;
 
     @Override
-    public Response discoverBsTeam(String username, String region, String language, Integer trophies,
+    public Response discoverBsTeam(String username, String region, Integer trophies,
                                  Integer threeVThreeWins, Integer twoVTwoWins, Integer soloWins,
                                  Integer pageSize, Integer pageNumber) {
         //Find user from repository
@@ -42,21 +42,11 @@ public class DiscoverServiceImpl implements DiscoverService {
 
         //Setting Criteria to filter repository
         //Removes searches for teams that user is already in
-        if (profile.getTeams().size() != 0) {
-            Criteria criteria = Criteria.where("_id").ne(profile.getTeams().get(0));
-            for (int i = 1 ; i < profile.getTeams().size() ; i++) {
-                criteria.and(profile.getTeams().get(i));
-            }
-            query.addCriteria(criteria);
-        }
+        query.addCriteria(Criteria.where("_id").nin(profile.getTeams()));
 
         //If region is not null or "Any", apply criteria to find results that MATCH region
-        if (region != null && !region.equals("Any") && !region.equals("")) {
+        if (region != null && !region.equals("Any")) {
             query.addCriteria(Criteria.where("region").is(region));
-        }
-        //If language is not null or "Any", apply criteria to find results that MATCH language
-        if (language != null && !language.equals("Any") && !language.equals("")) {
-            query.addCriteria(Criteria.where("language").is(language));
         }
         //If trophies is not null, apply criteria to find results that trophyRequirements that are less than or equal to trophies
         if (trophies != null) {
@@ -81,7 +71,6 @@ public class DiscoverServiceImpl implements DiscoverService {
 //        query.with(Sort.by(Sort.Direction.DESC, "minDuoWins"));
 //        query.with(Sort.by(Sort.Direction.DESC, "minSoloWins"));
 //        query.with(Sort.by(Sort.Direction.ASC, "region"));
-//        query.with(Sort.by(Sort.Direction.ASC, "language"));
 
         //Generate list of outputs
         List<BsTeam> bsTeamList = mongoTemplate.find(query, BsTeam.class);
