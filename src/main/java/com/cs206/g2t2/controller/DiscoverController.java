@@ -20,7 +20,6 @@ public class DiscoverController {
 
     @GetMapping("/team")
     public ResponseEntity<Response> discoverBsTeam(@RequestParam(required = false) String region,
-                                                  @RequestParam(required = false) String language,
                                                   @RequestParam(required = false) Integer trophies,
                                                   @RequestParam(required = false) Integer threeVThreeWins,
                                                   @RequestParam(required = false) Integer twoVTwoWins,
@@ -32,7 +31,7 @@ public class DiscoverController {
         String username = userDetails.getUsername();
 
         //Create team using createTeam method in bsTeamService
-        Response response = discoverService.discoverBsTeam(username,region, language, trophies, threeVThreeWins,
+        Response response = discoverService.discoverBsTeam(username, region, trophies, threeVThreeWins,
                                                          twoVTwoWins, soloWins, pageSize, pageNumber);
 
         //If successful, the response is encapsulated with HTTP code of 201(created) and contains the BsTeam object
