@@ -14,6 +14,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TeamUpdateRequest {
 
+    // teamName stores the username to be registered into the repository
+    @NotBlank(message = "Team Name is required")
+    @Size(min = 8,
+            max = 30,
+            message = "Team Name must be between {min} and {max} characters long")
+    private String teamName;
+
+    // region stores the competing region of the team
+    @NotBlank(message = "Region is required")
+    private String region;
+
+    // maximumTeamSize stores the maximum capacity of the team
+    @Min(value = 3, message = "Maximum Team Size must be more than or equal to {value}")
+    private int maximumTeamSize;
+
     //imageString stores the S3 image link, can be null if there is no image
     private String imageString;
 
