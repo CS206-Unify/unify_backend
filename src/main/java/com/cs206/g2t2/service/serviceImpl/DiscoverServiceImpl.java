@@ -51,11 +51,11 @@ public class DiscoverServiceImpl implements DiscoverService {
         }
 
         //If region is not null or "Any", apply criteria to find results that MATCH region
-        if (region != null && !region.equals("Any")) {
+        if (region != null && !region.equals("Any") && !region.equals("")) {
             query.addCriteria(Criteria.where("region").is(region));
         }
         //If language is not null or "Any", apply criteria to find results that MATCH language
-        if (language != null && !language.equals("Any")) {
+        if (language != null && !language.equals("Any") && !language.equals("")) {
             query.addCriteria(Criteria.where("language").is(language));
         }
         //If trophies is not null, apply criteria to find results that trophyRequirements that are less than or equal to trophies
@@ -117,11 +117,11 @@ public class DiscoverServiceImpl implements DiscoverService {
         query.addCriteria(Criteria.where("_id").ne(profile.get_id()));
 
         //If region is not null or "Any", apply criteria to find results that MATCH region
-        if (region != null && !region.equals("Any")) {
+        if (region != null && !region.equals("Any") && !region.equals("")) {
             query.addCriteria(Criteria.where("bsProfile.region").is(region));
         }
         //If language is not null or "Any", apply criteria to find results that MATCH language
-        if (language != null && !language.equals("Any")) {
+        if (language != null && !language.equals("Any") && !language.equals("")) {
             query.addCriteria(Criteria.where("language").is(language));
         }
         //If trophies is not null, apply criteria to find results that trophyRequirements that are greater than or equal to trophies
